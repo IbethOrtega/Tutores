@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestor de Trabajos Académicos</title>
+  <link rel="icon" type="image/png" href="logo-tus-trabajos.png">
+  <!-- Se incluye Chart.js para los gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --color-primario: #69a0cb;
+      --fondo-oscuro: #1a5276;
+      --fondo-tarjetas: #1f618d;
+      --texto-claro: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      color: var(--texto-claro);
+    }
+
+    body {
+      background: var(--fondo-oscuro);
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--color-primario);
+      font-size: 2.5rem;
+    }
+
+    .boton-principal {
+      display: block;
+      margin: 1rem auto;
+      padding: 0.8rem 1.5rem;
+      background: var(--color-primario);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .seccion {
+      background: var(--fondo-tarjetas);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .grid-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    input,
+    select,
+    button {
+      padding: 0.8rem;
+      border: none;
+      border-radius: 4px;
+      background: var(--color-primario);
+      color: white;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--fondo-tarjetas);
+      margin-bottom: 1rem;
+    }
+
+    th,
+    td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #3d3d3d;
+    }
+
+    .accion-btn {
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      background: var(--color-primario);
+      margin: 0 2px;
+    }
+
+    .filtros-container,
+    .json-container {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Grupos colapsables en trabajos pagados */
+    .grupo-pagado {
+      margin-bottom: 1rem;
+    }
+
+    .grupo-header {
+      cursor: pointer;
+      background: var(--color-primario);
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+
+    .group-content {
+      display: block;
+    }
+
+    /* Vistas */
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* Área de gráficos en la vista de estadísticas */
+    .charts-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .chart-box {
+      background: var(--fondo-tarjetas);
+      padding: 1rem;
+      border-radius: 12px;
+      flex: 1;
+      min-width: 300px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Botones para cambiar de vista -->
+    <button class="boton-principal" id="btn-ver-stats" onclick="mostrarEstadisticas()">Ver Estadísticas</button>
+    <button class="boton-principal" id="btn-ver-main" onclick="mostrarMain()" style="display:none;">Volver al
+      Sistema</button>
+
+    <!-- Vista Principal -->
+    <div id="view-main" class="view active">
+      <h1>📚 Gestor de Trabajos Académicos</h1>
+
+      <!-- Buscador por Código (filtra el listado sin cargar en el formulario) -->
+      <div class="seccion">
+        <input type="text" id="buscarCodigo" placeholder="Buscar por código">
+        <button onclick="buscarCodigo()">Buscar</button>
+      </div>
+
+      <!-- Formulario para agregar/editar trabajo -->
+      <div class="seccion" id="formulario">
+        <div class="grid-form">
+          <select id="tipoServicio">
+            <option value="">Tipo de servicio</option>
+            <option value="academico">Académico</option>
+            <option value="parcial">Parcial</option>
+            <option value="proyecto">Proyecto</option>
+            <option value="correccion">Corrección</option>
+          </select>
+          <input type="text" id="codigo" placeholder="Código">
+          <input type="number" id="valor" placeholder="Valor">
+          <input type="date" id="fecha">
+        </div>
+        <button onclick="guardarTrabajo()">Agregar Trabajo</button>
+      </div>
+
+      <!-- Botones de Importar/Exportar CSV -->
+      <div class="filtros-container">
+        <button class="accion-btn" onclick="exportarCSV()">Exportar CSV</button>
+        <input type="file" id="importarCSV" hidden accept=".csv">
+        <button class="accion-btn" onclick="document.getElementById('importarCSV').click()">Importar CSV</button>
+      </div>
+
+      <!-- Botones de Importar/Exportar JSON (Base de Datos) -->
+      <div class="json-container">
+        <button class="accion-btn" onclick="exportarJSON()">Exportar JSON</button>
+        <input type="file" id="importarJSON" hidden accept="application/json">
+        <button class="accion-btn" onclick="document.getElementById('importarJSON').click()">Importar JSON</button>
+      </div>
+
+      <!-- Estadísticas Globales -->
+      <div class="seccion">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <div style="flex:1; min-width:200px;">
+            <h3>Total Pagados</h3>
+            <div id="total-servicios">0</div>
+          </div>
+          <div style="flex:1; min-width:200px;">
+            <h3>Ganancias Totales</h3>
+            <div id="ganancias-totales">$0</div>
+          </div>
+          <div style="flex:1; min-width:200px;">
+            <h3>Pendiente Quincena 1</h3>
+            <div id="pendiente-q1">$0</div>
+          </div>
+          <div style="flex:1; min-width:200px;">
+            <h3>Pendiente Quincena 2</h3>
+            <div id="pendiente-q2">$0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trabajos Pendientes (agrupados por quincena) -->
+      <div class="seccion">
+        <h2>🕒 Trabajos Pendientes</h2>
+        <h3>Quincena 1</h3>
+        <table id="tabla-pendientes-q1">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Código</th>
+              <th>Valor</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <h3>Quincena 2</h3>
+        <table id="tabla-pendientes-q2">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Código</th>
+              <th>Valor</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- Trabajos Pagados agrupados por quincena (colapsables) -->
+      <div class="seccion">
+        <h2>✅ Trabajos Pagados</h2>
+        <div id="lista-servicios"></div>
+      </div>
+    </div>
+
+    <!-- Vista de Estadísticas -->
+    <div id="view-stats" class="view">
+      <h1>📊 Estadísticas del Mes Actual</h1>
+      <div class="seccion">
+        <h3>Total Ganado este Mes: <span id="total-mes">$0</span></h3>
+      </div>
+      <div class="charts-container">
+        <div class="chart-box">
+          <canvas id="chart-line"></canvas>
+        </div>
+        <div class="chart-box">
+          <canvas id="chart-bar"></canvas>
+        </div>
+        <div class="chart-box">
+          <canvas id="chart-pie"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Función para parsear una fecha en formato "YYYY-MM-DD" como fecha local
+    function parseDateLocal(dateStr) {
+      const parts = dateStr.split("-");
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
+    // Base de datos almacenada en localStorage
+    let servicios = JSON.parse(localStorage.getItem('servicios')) || [];
+    let pendientes = JSON.parse(localStorage.getItem('pendientes')) || [];
+    // Modo edición
+    let editMode = { active: false, esPendiente: true, codigo: null };
+
+    // Función para agregar o actualizar un trabajo
+    function guardarTrabajo() {
+      const tipo = document.getElementById('tipoServicio').value;
+      const codigo = document.getElementById('codigo').value;
+      const valor = document.getElementById('valor').value;
+      const fecha = document.getElementById('fecha').value;
+      if (!tipo || !codigo || !valor || !fecha) {
+        alert('Completa todos los campos');
+        return;
+      }
+      // Guardamos la fecha ingresada para usarla en el scroll
+      let fechaIngresada = fecha;
+      let modoEdicion = null;
+      if (editMode.active) {
+        if (editMode.esPendiente) {
+          pendientes = pendientes.map(s => s.codigo === editMode.codigo
+            ? { tipo, codigo, valor, fecha, entregado: s.entregado }
+            : s);
+        } else {
+          servicios = servicios.map(s => s.codigo === editMode.codigo
+            ? { tipo, codigo, valor, fecha }
+            : s);
+        }
+        modoEdicion = { ...editMode };
+        editMode = { active: false, esPendiente: true, codigo: null };
+      } else {
+        // Nuevo registro se añade a pendientes
+        pendientes.push({ tipo, codigo, valor, fecha, entregado: false });
+      }
+      guardarDatos();
+      actualizarTodo();
+      limpiarFormulario();
+
+      // Realiza scroll según el tipo de registro:
+      // Si era edición y era pagado, desplazarse al bloque correspondiente
+      if (modoEdicion && modoEdicion.active) {
+        if (!modoEdicion.esPendiente) {
+          let f = parseDateLocal(fechaIngresada);
+          let quincena = f.getDate() <= 15 ? "Quincena 1" : "Quincena 2";
+          let month = f.toLocaleString("es-ES", { month: "long" });
+          let year = f.getFullYear();
+          let key = `${quincena} ${month} ${year}`;
+          let groupId = "grupo_" + key.replace(/\s+/g, "_");
+          let grupoElement = document.getElementById(groupId);
+          if (grupoElement) {
+            grupoElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        } else {
+          // Edición de registro pendiente
+          let f = parseDateLocal(fechaIngresada);
+          if (f.getDate() <= 15) {
+            document.getElementById('tabla-pendientes-q1').scrollIntoView({ behavior: 'smooth' });
+          } else {
+            document.getElementById('tabla-pendientes-q2').scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      } else {
+        // Registro nuevo: scroll a la tabla de pendientes correspondiente
+        let newDate = parseDateLocal(fechaIngresada);
+        if (newDate.getDate() <= 15) {
+          document.getElementById('tabla-pendientes-q1').scrollIntoView({ behavior: 'smooth' });
+        } else {
+          document.getElementById('tabla-pendientes-q2').scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+
+    function limpiarFormulario() {
+      document.getElementById('tipoServicio').value = '';
+      document.getElementById('codigo').value = '';
+      document.getElementById('valor').value = '';
+      document.getElementById('fecha').value = '';
+    }
+
+    function marcarComoPagado(codigo) {
+      const index = pendientes.findIndex(s => s.codigo === codigo);
+      if (index !== -1) {
+        const [trabajo] = pendientes.splice(index, 1);
+        servicios.push(trabajo);
+        guardarDatos();
+        actualizarTodo();
+      }
+    }
+
+    function marcarComoEntregado(codigo) {
+      const trabajo = pendientes.find(s => s.codigo === codigo);
+      if (trabajo) {
+        trabajo.entregado = true;
+        guardarDatos();
+        actualizarTodo();
+      }
+    }
+
+    // Al editar, se carga el registro en el formulario y se hace scroll al formulario
+    function editarServicio(codigo, esPendiente = true) {
+      const trabajo = esPendiente
+        ? pendientes.find(s => s.codigo === codigo)
+        : servicios.find(s => s.codigo === codigo);
+      if (trabajo) {
+        document.getElementById('tipoServicio').value = trabajo.tipo;
+        document.getElementById('codigo').value = trabajo.codigo;
+        document.getElementById('valor').value = trabajo.valor;
+        document.getElementById('fecha').value = trabajo.fecha;
+        editMode = { active: true, esPendiente, codigo };
+        // Scroll al formulario
+        document.getElementById('tipoServicio').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function eliminarServicio(codigo, esPendiente = true) {
+      if (!confirm('¿Eliminar este registro?')) return;
+      if (esPendiente) {
+        pendientes = pendientes.filter(s => s.codigo !== codigo);
+      } else {
+        servicios = servicios.filter(s => s.codigo !== codigo);
+      }
+      guardarDatos();
+      actualizarTodo();
+    }
+
+    // Función de búsqueda: filtra el listado y hace scroll a la sección de resultados
+    function buscarCodigo() {
+      const codigoBuscado = document.getElementById('buscarCodigo').value.trim();
+      if (!codigoBuscado) {
+        actualizarTablas();
+        return;
+      }
+      // Filtrar pendientes y pagados
+      const resultadosPendientes = pendientes.filter(s => s.codigo === codigoBuscado);
+      const resultadosServicios = servicios.filter(s => s.codigo === codigoBuscado);
+
+      // Actualizar tablas con los resultados
+      if (resultadosPendientes.length > 0) {
+        const pendientesQ1 = resultadosPendientes.filter(s => parseDateLocal(s.fecha).getDate() <= 15);
+        const pendientesQ2 = resultadosPendientes.filter(s => parseDateLocal(s.fecha).getDate() > 15);
+        document.querySelector('#tabla-pendientes-q1 tbody').innerHTML = pendientesQ1.map(s => `
+          <tr>
+            <td>${s.tipo}</td>
+            <td>${s.codigo}</td>
+            <td>$${Number(s.valor).toLocaleString()}</td>
+            <td>${parseDateLocal(s.fecha).toLocaleDateString()}</td>
+            <td>
+              <button class="accion-btn" onclick="marcarComoPagado('${s.codigo}')">✅ Pagado</button>
+              <button class="accion-btn" onclick="marcarComoEntregado('${s.codigo}')">
+                ${s.entregado ? '✔️ Entregado' : '📦 Entregar'}
+              </button>
+              <button class="accion-btn" onclick="editarServicio('${s.codigo}', true)">✏️</button>
+              <button class="accion-btn" onclick="eliminarServicio('${s.codigo}', true)">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+        document.querySelector('#tabla-pendientes-q2 tbody').innerHTML = pendientesQ2.map(s => `
+          <tr>
+            <td>${s.tipo}</td>
+            <td>${s.codigo}</td>
+            <td>$${Number(s.valor).toLocaleString()}</td>
+            <td>${parseDateLocal(s.fecha).toLocaleDateString()}</td>
+            <td>
+              <button class="accion-btn" onclick="marcarComoPagado('${s.codigo}')">✅ Pagado</button>
+              <button class="accion-btn" onclick="marcarComoEntregado('${s.codigo}')">
+                ${s.entregado ? '✔️ Entregado' : '📦 Entregar'}
+              </button>
+              <button class="accion-btn" onclick="editarServicio('${s.codigo}', true)">✏️</button>
+              <button class="accion-btn" onclick="eliminarServicio('${s.codigo}', true)">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+      } else {
+        document.querySelector('#tabla-pendientes-q1 tbody').innerHTML = '';
+        document.querySelector('#tabla-pendientes-q2 tbody').innerHTML = '';
+      }
+
+      if (resultadosServicios.length > 0) {
+        let grupos = {};
+        resultadosServicios.forEach(s => {
+          const f = parseDateLocal(s.fecha);
+          const quincena = f.getDate() <= 15 ? "Quincena 1" : "Quincena 2";
+          const month = f.toLocaleString("es-ES", { month: "long" });
+          const year = f.getFullYear();
+          const key = `${quincena} ${month} ${year}`;
+          if (!grupos[key]) grupos[key] = [];
+          grupos[key].push(s);
+        });
+        // Ordenar las claves en orden descendente (última liquidación primero)
+        let keys = Object.keys(grupos);
+        const monthMap = {
+          "enero": 1,
+          "febrero": 2,
+          "marzo": 3,
+          "abril": 4,
+          "mayo": 5,
+          "junio": 6,
+          "julio": 7,
+          "agosto": 8,
+          "septiembre": 9,
+          "octubre": 10,
+          "noviembre": 11,
+          "diciembre": 12
+        };
+        keys.sort((a, b) => {
+          let partsA = a.split(" ");
+          let partsB = b.split(" ");
+          let yearA = parseInt(partsA[3]);
+          let yearB = parseInt(partsB[3]);
+          if (yearA !== yearB) return yearB - yearA; // Descendente por año
+          let monthA = monthMap[partsA[2].toLowerCase()] || 0;
+          let monthB = monthMap[partsB[2].toLowerCase()] || 0;
+          if (monthA !== monthB) return monthB - monthA; // Descendente por mes
+          let quincenaA = parseInt(partsA[1]);
+          let quincenaB = parseInt(partsB[1]);
+          return quincenaB - quincenaA; // Descendente por quincena
+        });
+
+        let htmlGrupos = "";
+        keys.forEach(key => {
+          const totalGrupo = grupos[key].reduce((acc, s) => acc + Number(s.valor), 0);
+          let groupId = "grupo_" + key.replace(/\s+/g, "_");
+          htmlGrupos += `
+            <div id="${groupId}" class="grupo-pagado">
+              <h3 class="grupo-header" onclick="toggleGroup(this)">${key} - Total: $${totalGrupo.toLocaleString()}</h3>
+              <div class="group-content">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Tipo</th>
+                      <th>Código</th>
+                      <th>Valor</th>
+                      <th>Fecha</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${grupos[key].map(s => `
+                      <tr>
+                        <td>${s.tipo}</td>
+                        <td>${s.codigo}</td>
+                        <td>$${Number(s.valor).toLocaleString()}</td>
+                        <td>${parseDateLocal(s.fecha).toLocaleDateString()}</td>
+                        <td>
+                          <button class="accion-btn" onclick="editarServicio('${s.codigo}', false)">✏️</button>
+                          <button class="accion-btn" onclick="eliminarServicio('${s.codigo}', false)">🗑️</button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        });
+        document.getElementById('lista-servicios').innerHTML = htmlGrupos;
+      } else {
+        document.getElementById('lista-servicios').innerHTML = '';
+      }
+      // Al terminar la búsqueda, se hace scroll hacia el listado de resultados
+      // Se prioriza el bloque de pendientes si hay resultados; de lo contrario, al de pagados
+      if (resultadosPendientes.length > 0) {
+        document.getElementById('tabla-pendientes-q1').scrollIntoView({ behavior: 'smooth' });
+      } else if (resultadosServicios.length > 0) {
+        document.getElementById('lista-servicios').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function actualizarTodo() {
+      actualizarEstadisticasGlobales();
+      actualizarTablas();
+    }
+
+    function actualizarEstadisticasGlobales() {
+      document.getElementById('total-servicios').textContent = servicios.length;
+      const totalPagado = servicios.reduce((acc, s) => acc + Number(s.valor), 0);
+      document.getElementById('ganancias-totales').textContent = `$${totalPagado.toLocaleString()}`;
+      const pendienteQ1 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() <= 15)
+        .reduce((acc, s) => acc + Number(s.valor), 0);
+      const pendienteQ2 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() > 15)
+        .reduce((acc, s) => acc + Number(s.valor), 0);
+      document.getElementById('pendiente-q1').textContent = `$${pendienteQ1.toLocaleString()}`;
+      document.getElementById('pendiente-q2').textContent = `$${pendienteQ2.toLocaleString()}`;
+
+      // Estadísticas del mes actual (vista de estadísticas)
+      const hoy = new Date();
+      const mesActual = hoy.getMonth();
+      const anioActual = hoy.getFullYear();
+      const totalMes = servicios.filter(s => {
+        const f = parseDateLocal(s.fecha);
+        return f.getMonth() === mesActual && f.getFullYear() === anioActual;
+      }).reduce((acc, s) => acc + Number(s.valor), 0);
+      document.getElementById('total-mes').textContent = `$${totalMes.toLocaleString()}`;
+    }
+
+    function actualizarTablas() {
+      // Actualiza la tabla de pendientes
+      const pendientesQ1 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() <= 15);
+      const pendientesQ2 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() > 15);
+      document.querySelector('#tabla-pendientes-q1 tbody').innerHTML = pendientesQ1.map(s => `
+        <tr>
+          <td>${s.tipo}</td>
+          <td>${s.codigo}</td>
+          <td>$${Number(s.valor).toLocaleString()}</td>
+          <td>${parseDateLocal(s.fecha).toLocaleDateString()}</td>
+          <td>
+            <button class="accion-btn" onclick="marcarComoPagado('${s.codigo}')">✅ Pagado</button>
+            <button class="accion-btn" onclick="marcarComoEntregado('${s.codigo}')">
+              ${s.entregado ? '✔️ Entregado' : '📦 Entregar'}
+            </button>
+            <button class="accion-btn" onclick="editarServicio('${s.codigo}', true)">✏️</button>
+            <button class="accion-btn" onclick="eliminarServicio('${s.codigo}', true)">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+      document.querySelector('#tabla-pendientes-q2 tbody').innerHTML = pendientesQ2.map(s => `
+        <tr>
+          <td>${s.tipo}</td>
+          <td>${s.codigo}</td>
+          <td>$${Number(s.valor).toLocaleString()}</td>
+          <td>${parseDateLocal(s.fecha).toLocaleDateString()}</td>
+          <td>
+            <button class="accion-btn" onclick="marcarComoPagado('${s.codigo}')">✅ Pagado</button>
+            <button class="accion-btn" onclick="marcarComoEntregado('${s.codigo}')">
+              ${s.entregado ? '✔️ Entregado' : '📦 Entregar'}
+            </button>
+            <button class="accion-btn" onclick="editarServicio('${s.codigo}', true)">✏️</button>
+            <button class="accion-btn" onclick="eliminarServicio('${s.codigo}', true)">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+
+      // Trabajos pagados agrupados por quincena, mes y año
+      let grupos = {};
+      servicios.forEach(s => {
+        const f = parseDateLocal(s.fecha);
+        const quincena = f.getDate() <= 15 ? "Quincena 1" : "Quincena 2";
+        const month = f.toLocaleString("es-ES", { month: "long" });
+        const year = f.getFullYear();
+        const key = `${quincena} ${month} ${year}`;
+        if (!grupos[key]) grupos[key] = [];
+        grupos[key].push(s);
+      });
+      // Ordenar las claves en orden descendente (última liquidación primero)
+      let keys = Object.keys(grupos);
+      const monthMap = {
+        "enero": 1,
+        "febrero": 2,
+        "marzo": 3,
+        "abril": 4,
+        "mayo": 5,
+        "junio": 6,
+        "julio": 7,
+        "agosto": 8,
+        "septiembre": 9,
+        "octubre": 10,
+        "noviembre": 11,
+        "diciembre": 12
+      };
+      keys.sort((a, b) => {
+        let partsA = a.split(" ");
+        let partsB = b.split(" ");
+        let yearA = parseInt(partsA[3]);
+        let yearB = parseInt(partsB[3]);
+        if (yearA !== yearB) return yearB - yearA; // Descendente por año
+        let monthA = monthMap[partsA[2].toLowerCase()] || 0;
+        let monthB = monthMap[partsB[2].toLowerCase()] || 0;
+        if (monthA !== monthB) return monthB - monthA; // Descendente por mes
+        let quincenaA = parseInt(partsA[1]);
+        let quincenaB = parseInt(partsB[1]);
+        return quincenaB - quincenaA; // Descendente por quincena
+      });
+
+      let htmlGrupos = "";
+      keys.forEach(key => {
+        const totalGrupo = grupos[key].reduce((acc, s) => acc + Number(s.valor), 0);
+        let groupId = "grupo_" + key.replace(/\s+/g, "_");
+        htmlGrupos += `
+          <div id="${groupId}" class="grupo-pagado">
+            <h3 class="grupo-header" onclick="toggleGroup(this)">${key} - Total: $${totalGrupo.toLocaleString()}</h3>
+            <div class="group-content">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Código</th>
+                    <th>Valor</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${grupos[key].map(s => `
+                    <tr>
+                      <td>${s.tipo}</td>
+                      <td>${s.codigo}</td>
+                      <td>$${Number(s.valor).toLocaleString()}</td>
+                      <td>${parseDateLocal(s.fecha).toLocaleDateString()}</td>
+                      <td>
+                        <button class="accion-btn" onclick="editarServicio('${s.codigo}', false)">✏️</button>
+                        <button class="accion-btn" onclick="eliminarServicio('${s.codigo}', false)">🗑️</button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('lista-servicios').innerHTML = htmlGrupos;
+    }
+
+    function toggleGroup(element) {
+      const content = element.nextElementSibling;
+      content.style.display = content.style.display === "none" ? "block" : "none";
+    }
+
+    function guardarDatos() {
+      localStorage.setItem('servicios', JSON.stringify(servicios));
+      localStorage.setItem('pendientes', JSON.stringify(pendientes));
+    }
+
+    // Exportar CSV (para Excel)
+    function exportarCSV() {
+      const header = ['Estado', 'Tipo', 'Código', 'Valor', 'Fecha'].join(',');
+      const datosPagados = servicios.map(s => ['pagado', s.tipo, s.codigo, s.valor, s.fecha].join(','));
+      const datosPendientes = pendientes.map(s => ['pendiente', s.tipo, s.codigo, s.valor, s.fecha].join(','));
+      const csvContent = [header, ...datosPagados, ...datosPendientes].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `backup-trabajos-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Exportar base de datos en JSON
+    function exportarJSON() {
+      const db = { servicios, pendientes };
+      const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `base-datos-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Importar JSON
+    document.getElementById('importarJSON').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const db = JSON.parse(e.target.result);
+          servicios = db.servicios || [];
+          pendientes = db.pendientes || [];
+          guardarDatos();
+          actualizarTodo();
+          alert('Base de datos importada correctamente.');
+        } catch (error) {
+          alert('Error al importar el archivo JSON.');
+        }
+      }
+      reader.readAsText(file);
+    });
+
+    // Importar CSV
+    document.getElementById('importarCSV').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const csv = e.target.result;
+        const lines = csv.split('\n').slice(1);
+        servicios = [];
+        pendientes = [];
+        lines.forEach(line => {
+          const [estado, tipo, codigo, valor, fecha] = line.split(',');
+          if (!tipo) return;
+          const registro = { tipo: tipo.trim(), codigo: codigo.trim(), valor: valor.trim(), fecha: fecha.trim(), entregado: false };
+          if (estado.trim().toLowerCase() === 'pagado') {
+            servicios.push(registro);
+          } else {
+            pendientes.push(registro);
+          }
+        });
+        guardarDatos();
+        actualizarTodo();
+        alert(`Importación exitosa: ${lines.length} registros cargados`);
+      }
+      reader.readAsText(file);
+    });
+
+    // Funciones para cambiar de vista
+    function mostrarEstadisticas() {
+      document.getElementById('view-main').classList.remove('active');
+      document.getElementById('view-stats').classList.add('active');
+      document.getElementById('btn-ver-stats').style.display = "none";
+      document.getElementById('btn-ver-main').style.display = "block";
+      actualizarEstadisticasGlobales();
+      actualizarCharts();
+    }
+
+    function mostrarMain() {
+      document.getElementById('view-stats').classList.remove('active');
+      document.getElementById('view-main').classList.add('active');
+      document.getElementById('btn-ver-main').style.display = "none";
+      document.getElementById('btn-ver-stats').style.display = "block";
+    }
+
+    // Gráficos en la vista de estadísticas
+    let chartLine, chartBar, chartPie;
+
+    function actualizarCharts() {
+      const hoy = new Date();
+      const mesActual = hoy.getMonth();
+      const anioActual = hoy.getFullYear();
+      const trabajosMes = servicios.filter(s => {
+        const f = parseDateLocal(s.fecha);
+        return f.getMonth() === mesActual && f.getFullYear() === anioActual;
+      });
+      const dias = Array.from({ length: 31 }, (_, i) => i + 1);
+      const gananciasPorDia = dias.map(dia =>
+        trabajosMes.filter(s => parseDateLocal(s.fecha).getDate() === dia)
+          .reduce((acc, s) => acc + Number(s.valor), 0)
+      );
+      const tipos = ["academico", "parcial", "proyecto", "correccion"];
+      const gananciasPorTipo = tipos.map(tipo =>
+        trabajosMes.filter(s => s.tipo === tipo)
+          .reduce((acc, s) => acc + Number(s.valor), 0)
+      );
+      if (chartLine) {
+        chartLine.data.labels = dias;
+        chartLine.data.datasets[0].data = gananciasPorDia;
+        chartLine.update();
+      } else {
+        const ctxLine = document.getElementById('chart-line').getContext('2d');
+        chartLine = new Chart(ctxLine, {
+          type: 'line',
+          data: {
+            labels: dias,
+            datasets: [{
+              label: 'Ganancias por día',
+              data: gananciasPorDia,
+              backgroundColor: 'rgba(105, 160, 203, 0.2)',
+              borderColor: 'rgba(105, 160, 203, 1)',
+              borderWidth: 2,
+              fill: true
+            }]
+          },
+          options: { scales: { x: { title: { display: true, text: 'Día del mes' } }, y: { title: { display: true, text: 'Ganancias' } } } }
+        });
+      }
+      if (chartBar) {
+        chartBar.data.labels = tipos;
+        chartBar.data.datasets[0].data = gananciasPorTipo;
+        chartBar.update();
+      } else {
+        const ctxBar = document.getElementById('chart-bar').getContext('2d');
+        chartBar = new Chart(ctxBar, {
+          type: 'bar',
+          data: {
+            labels: tipos,
+            datasets: [{
+              label: 'Ganancias por tipo',
+              data: gananciasPorTipo,
+              backgroundColor: ['#2C3E50', '#34495E', '#1F618D', '#566573']
+            }]
+          },
+          options: { scales: { y: { beginAtZero: true, title: { display: true, text: 'Ganancias' } } } }
+        });
+      }
+      if (chartPie) {
+        chartPie.data.labels = tipos;
+        chartPie.data.datasets[0].data = gananciasPorTipo;
+        chartPie.update();
+      } else {
+        const ctxPie = document.getElementById('chart-pie').getContext('2d');
+        chartPie = new Chart(ctxPie, {
+          type: 'pie',
+          data: {
+            labels: tipos,
+            datasets: [{
+              label: 'Distribución por tipo',
+              data: gananciasPorTipo,
+              backgroundColor: ['#2C3E50', '#34495E', '#1F618D', '#566573']
+            }]
+          }
+        });
+      }
+    }
+
+    function guardarDatos() {
+      localStorage.setItem('servicios', JSON.stringify(servicios));
+      localStorage.setItem('pendientes', JSON.stringify(pendientes));
+    }
+
+    // Inicializar la aplicación
+    actualizarTodo();
+  </script>
+</body>
+
+</html>
