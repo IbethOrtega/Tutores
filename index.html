@@ -10,147 +10,170 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --color-primario: #69a0cb;
-      --fondo-oscuro: #1a5276;
-      --fondo-tarjetas: #1f618d;
-      --texto-claro: #ffffff;
-    }
+  --color-primario: #69a0cb;
+  --fondo-oscuro: #1a5276;
+  --fondo-tarjetas: #1f618d;
+  --texto-claro: #ffffff;
+}
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-      color: var(--texto-claro);
-    }
+* {
+  margin: 0; 
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  color: var(--texto-claro);
+}
 
-    body {
-      background: var(--fondo-oscuro);
-      padding: 2rem;
-      min-height: 100vh;
-    }
+body {
+  background: var(--fondo-oscuro);
+  padding: 1rem;
+  min-height: 100vh;
+}
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
 
-    h1 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: var(--color-primario);
-      font-size: 2.5rem;
-    }
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--color-primario);
+  font-size: 2.5rem;
+}
 
-    .boton-principal {
-      display: block;
-      margin: 1rem auto;
-      padding: 0.8rem 1.5rem;
-      background: var(--color-primario);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
+.boton-principal {
+  display: block;
+  margin: 1rem auto;
+  padding: 0.8rem 1.5rem;
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
 
-    .seccion {
-      background: var(--fondo-tarjetas);
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-    }
+.seccion {
+  background: var(--fondo-tarjetas);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
 
-    .grid-form {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
+.grid-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
 
-    input,
-    select,
-    button {
-      padding: 0.8rem;
-      border: none;
-      border-radius: 4px;
-      background: var(--color-primario);
-      color: white;
-      font-size: 1rem;
-      outline: none;
-    }
+input, select, button {
+  padding: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--color-primario);
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  width: 100%;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--fondo-tarjetas);
-      margin-bottom: 1rem;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--fondo-tarjetas);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
 
-    th,
-    td {
-      padding: 1rem;
-      text-align: left;
-      border-bottom: 1px solid #3d3d3d;
-    }
+th, td {
+  padding: 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid #3d3d3d;
+}
 
-    .accion-btn {
-      padding: 0.4rem 0.8rem;
-      border-radius: 20px;
-      border: none;
-      cursor: pointer;
-      background: var(--color-primario);
-      margin: 0 2px;
-    }
+.accion-btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  background: var(--color-primario);
+  margin: 0 2px;
+  font-size: 0.9rem;
+}
 
-    .filtros-container,
-    .json-container {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
+.filtros-container, .json-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
 
-    /* Grupos colapsables en trabajos pagados */
-    .grupo-pagado {
-      margin-bottom: 1rem;
-    }
+/* Grupos colapsables en trabajos pagados */
+.grupo-pagado {
+  margin-bottom: 1rem;
+}
 
-    .grupo-header {
-      cursor: pointer;
-      background: var(--color-primario);
-      padding: 0.5rem;
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-    }
+.grupo-header {
+  cursor: pointer;
+  background: var(--color-primario);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
 
-    .group-content {
-      display: block;
-    }
+.group-content {
+  display: block;
+}
 
-    /* Vistas */
-    .view {
-      display: none;
-    }
+/* Vistas */
+.view {
+  display: none;
+}
 
-    .view.active {
-      display: block;
-    }
+.view.active {
+  display: block;
+}
 
-    /* Área de gráficos en la vista de estadísticas */
-    .charts-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-    }
+/* Área de gráficos en la vista de estadísticas */
+.charts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
 
-    .chart-box {
-      background: var(--fondo-tarjetas);
-      padding: 1rem;
-      border-radius: 12px;
-      flex: 1;
-      min-width: 300px;
-    }
+.chart-box {
+  background: var(--fondo-tarjetas);
+  padding: 1rem;
+  border-radius: 12px;
+  flex: 1;
+  min-width: 280px;
+}
+
+/* Media Queries para pantallas pequeñas */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+  .boton-principal {
+    font-size: 0.9rem;
+    padding: 0.7rem 1.2rem;
+  }
+  .grupo-header {
+    font-size: 0.9rem;
+  }
+  th, td {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+  }
+  input, select, button {
+    font-size: 0.9rem;
+    padding: 0.7rem;
+  }
+}
   </style>
 </head>
 
