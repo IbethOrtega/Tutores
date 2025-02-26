@@ -9,13 +9,14 @@
   <!-- Se incluye Chart.js para los gráficos -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root {
+:root {
   --color-primario: #69a0cb;
   --fondo-oscuro: #1a5276;
   --fondo-tarjetas: #1f618d;
   --texto-claro: #ffffff;
 }
 
+/* Reset y tipografía */
 * {
   margin: 0; 
   padding: 0;
@@ -24,29 +25,35 @@
   color: var(--texto-claro);
 }
 
+/* Fondo y contenedor principal */
 body {
   background: var(--fondo-oscuro);
-  padding: 1rem;
+  margin: 0;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
 }
 
 .container {
-  max-width: 1400px;
+  width: 100%;
+  max-width: 600px; /* Ajusta este valor si quieres que se vea más ancho o más estrecho */
+  padding: 1rem;
   margin: 0 auto;
-  padding: 0 1rem;
 }
 
+/* Encabezado */
 h1 {
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   color: var(--color-primario);
-  font-size: 2.5rem;
+  font-size: 1.8rem;
 }
 
+/* Botones principales */
 .boton-principal {
   display: block;
-  margin: 1rem auto;
-  padding: 0.8rem 1.5rem;
+  margin: 0.5rem auto;
+  padding: 0.7rem 1rem;
   background: var(--color-primario);
   color: white;
   border: none;
@@ -55,22 +62,24 @@ h1 {
   font-size: 1rem;
 }
 
+/* Secciones */
 .seccion {
   background: var(--fondo-tarjetas);
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 12px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
+/* Formularios y contenedores */
 .grid-form {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
 input, select, button {
-  padding: 0.8rem;
+  padding: 0.7rem;
   border: none;
   border-radius: 4px;
   background: var(--color-primario);
@@ -80,6 +89,14 @@ input, select, button {
   width: 100%;
 }
 
+.filtros-container, .json-container {
+  display: flex;
+  flex-direction: column; /* Para que los botones queden uno debajo de otro en pantallas pequeñas */
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Tablas */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -89,26 +106,20 @@ table {
 }
 
 th, td {
-  padding: 0.8rem;
+  padding: 0.5rem;
   text-align: left;
   border-bottom: 1px solid #3d3d3d;
 }
 
+/* Botones de acción en las tablas */
 .accion-btn {
-  padding: 0.4rem 0.8rem;
+  padding: 0.3rem 0.5rem;
   border-radius: 20px;
   border: none;
   cursor: pointer;
   background: var(--color-primario);
   margin: 0 2px;
-  font-size: 0.9rem;
-}
-
-.filtros-container, .json-container {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  font-size: 0.8rem;
 }
 
 /* Grupos colapsables en trabajos pagados */
@@ -129,7 +140,7 @@ th, td {
   display: block;
 }
 
-/* Vistas */
+/* Vistas (pantalla principal / pantalla de estadísticas) */
 .view {
   display: none;
 }
@@ -138,11 +149,11 @@ th, td {
   display: block;
 }
 
-/* Área de gráficos en la vista de estadísticas */
+/* Contenedores de los gráficos */
 .charts-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .chart-box {
@@ -153,28 +164,31 @@ th, td {
   min-width: 280px;
 }
 
-/* Media Queries para pantallas pequeñas */
+/* Media Queries para pantallas más pequeñas */
 @media (max-width: 768px) {
   h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   .boton-principal {
     font-size: 0.9rem;
-    padding: 0.7rem 1.2rem;
+    padding: 0.6rem 1rem;
   }
   .grupo-header {
     font-size: 0.9rem;
   }
   th, td {
     font-size: 0.8rem;
-    padding: 0.6rem;
+    padding: 0.4rem;
   }
   input, select, button {
     font-size: 0.9rem;
-    padding: 0.7rem;
+    padding: 0.6rem;
+  }
+  .grid-form {
+    grid-template-columns: 1fr;
   }
 }
-  </style>
+</style>
 </head>
 
 <body>
