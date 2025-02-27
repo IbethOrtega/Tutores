@@ -17,8 +17,9 @@
   --blanco: #ffffff;
   --gris-claro: #e0e0e0;
   --sombra: rgba(0, 0, 0, 0.1);
-  --color-boton: #4CAF50; /* Nuevo color para los botones */
-  --color-boton-hover: #45a049; /* Color al pasar el mouse */
+  /* Nuevas variables para botones */
+  --btn-bg: #28a745;
+  --btn-hover: #218838;
 }
 
 /* Reset básico */
@@ -56,24 +57,26 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Botones principales */
+/* Botones principales - nuevo diseño */
 .boton {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--color-boton);
+  background: linear-gradient(135deg, var(--btn-bg), var(--btn-hover));
   color: var(--blanco);
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 12px 20px;
   border: none;
+  border-radius: 50px;
+  font-size: 16px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .boton:hover {
-  background: var(--color-boton-hover);
+  background: linear-gradient(135deg, var(--btn-hover), #1e7e34);
+  transform: translateY(-2px);
 }
 
 .boton i {
@@ -119,12 +122,12 @@ input, select {
 /* Tablas */
 table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   background: var(--blanco);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 5px var(--sombra);
-  margin-bottom: 16px; /* Añadido para separar las tablas */
 }
 
 th, td {
@@ -173,7 +176,7 @@ td {
   
   .boton {
     font-size: 14px;
-    padding: 10px;
+    padding: 10px 16px;
   }
   
   .acciones {
