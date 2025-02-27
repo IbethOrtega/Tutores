@@ -832,6 +832,68 @@
       a.click();
       URL.revokeObjectURL(url);
     }
+    // Importar JSON
+    document.getElementById('importarJSON').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const db = JSON.parse(e.target.result);
+          // Asegurarse de que se reciben arrays válidos
+          servicios = Array.isArray(db.servicios) ? db.servicios : [];
+          pendientes = Array.isArray(db.pendientes) ? db.pendientes : [];
+          guardarDatos();
+          actualizarTodo();
+          showToast("Base de datos importada correctamente", "success");
+        } catch (error) {
+          console.error(error);
+          showToast("Error al importar el archivo JSON", "error");
+        }
+      }
+      reader.readAsText(file);
+    });
+
+    // Importar CSV
+    document.getElementById('importarCSV').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const csv = e.target.result;
+          // Separa el contenido en líneas y elimina líneas vacías
+          const lines = csv.split('\n').filter(line => line.trim().length > 0);
+          // Si la primera línea contiene "estado", se asume que es el encabezado
+          if (lines[0].toLowerCase().includes("estado")) {
+            lines.shift();
+          }
+          // Reiniciar arrays
+          servicios = [];
+          pendientes = [];
+          lines.forEach(line => {
+            const parts = line.split(',').map(p => p.trim());
+            if (parts.length < 5) return; // omitir líneas con datos incompletos
+            const [estado, tipo, codigo, valor, fecha] = parts;
+            if (!tipo) return;
+            const registro = { tipo, codigo, valor, fecha, entregado: false };
+            if (estado.toLowerCase() === 'pagado') {
+              servicios.push(registro);
+            } else {
+              pendientes.push(registro);
+            }
+          });
+          guardarDatos();
+          actualizarTodo();
+          showToast(`Importación exitosa: ${lines.length} registros cargados`, "success");
+        } catch (error) {
+          console.error(error);
+          showToast("Error al importar el archivo CSV", "error");
+        }
+      }
+      reader.readAsText(file);
+    });
+
 
     function exportarPDF() {
       const { jsPDF } = window.jspdf;
