@@ -10,18 +10,14 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
-  /* Colores base más modernos */
-  --color-primario: #2D9CDB;
-  --color-secundario: #56CCF2;
+  /* Paleta de colores actualizada */
+  --color-primario: #6C63FF;    /* Ej: Morado moderno */
+  --color-secundario: #2D9CDB;  /* Ej: Celeste */
   --fondo: #f9f9f9;
   --texto: #333;
   --blanco: #ffffff;
   --gris-claro: #f0f0f0;
   --sombra: rgba(0, 0, 0, 0.05);
-
-  /* Colores para botones */
-  --btn-bg: #2D9CDB;
-  --btn-hover: #56CCF2;
 }
 
 /* Reset básico */
@@ -32,6 +28,7 @@
   font-family: 'Poppins', sans-serif;
 }
 
+/* Fondo y contenedor principal */
 body {
   background: var(--fondo);
   display: flex;
@@ -47,7 +44,8 @@ body {
   background: var(--blanco);
   padding: 20px;
   border-radius: 1rem;
-  box-shadow: 0 4px 8px var(--sombra);
+  box-shadow: 0 4px 10px var(--sombra);
+  overflow: hidden; /* Por si algo se descuadra */
 }
 
 /* Título */
@@ -58,42 +56,16 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Botones principales con estilo moderno */
-.boton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: var(--btn-bg);
-  color: var(--blanco);
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 999px; /* Forma de "píldora" */
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.boton:hover {
-  background: var(--btn-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
-
-.boton i {
-  font-size: 20px;
-}
-
-/* Contenedor de secciones */
+/* Sección contenedora */
 .seccion {
   background: var(--gris-claro);
   padding: 16px;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   margin-bottom: 16px;
+  overflow-x: auto; /* Permite scroll si la tabla se hace muy grande */
 }
 
-/* Formulario */
+/* Formularios */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -109,7 +81,34 @@ input, select {
   width: 100%;
 }
 
-/* Acciones con botones */
+/* Botones con estilo moderno */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+  color: var(--blanco);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 999px; /* Forma de "píldora" */
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.boton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  filter: brightness(1.05);
+}
+
+.boton i {
+  font-size: 1.2rem;
+}
+
+/* Acciones (grupo de botones) */
 .acciones {
   display: flex;
   justify-content: space-between;
@@ -124,13 +123,13 @@ input, select {
 /* Tablas */
 table {
   width: 100%;
-  max-width: 100%;
+  max-width: 100%;         /* Para que no exceda el contenedor */
   border-collapse: collapse;
   background: var(--blanco);
   border-radius: 0.5rem;
-  overflow: hidden;
   box-shadow: 0 2px 5px var(--sombra);
   margin: 0 auto;
+  table-layout: fixed;     /* Fija el ancho de las columnas */
 }
 
 th, td {
@@ -138,18 +137,20 @@ th, td {
   text-align: left;
   border-bottom: 1px solid var(--gris-claro);
   font-size: 14px;
-  word-wrap: break-word;      /* Permite que el texto baje de línea si es muy largo */
-  white-space: normal;
+  word-wrap: break-word;    /* Permite que el texto baje de línea */
+  overflow-wrap: break-word;/* Rompe palabras largas */
+  white-space: normal;      /* Permite saltos de línea */
 }
 
 th {
   background: var(--color-primario);
   color: var(--blanco);
+  font-weight: 600;
 }
 
-/* Íconos de acciones dentro de la tabla */
+/* Íconos de acción en la tabla */
 .accion-icono {
-  font-size: 18px;
+  font-size: 16px;
   padding: 6px;
   border-radius: 50%;
   background: var(--gris-claro);
@@ -157,7 +158,7 @@ th {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .accion-icono:hover {
@@ -193,7 +194,7 @@ th {
   }
   
   .accion-icono {
-    font-size: 16px;
+    font-size: 14px;
     padding: 4px;
   }
 }
