@@ -10,16 +10,18 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
-  --color-primario: #007bff;
-  --color-secundario: #0056b3;
-  --fondo: #f4f4f9;
+  /* Colores base más modernos */
+  --color-primario: #2D9CDB;
+  --color-secundario: #56CCF2;
+  --fondo: #f9f9f9;
   --texto: #333;
   --blanco: #ffffff;
-  --gris-claro: #e0e0e0;
-  --sombra: rgba(0, 0, 0, 0.1);
-  /* Nuevas variables para botones */
-  --btn-bg: #28a745;
-  --btn-hover: #218838;
+  --gris-claro: #f0f0f0;
+  --sombra: rgba(0, 0, 0, 0.05);
+
+  /* Colores para botones */
+  --btn-bg: #2D9CDB;
+  --btn-hover: #56CCF2;
 }
 
 /* Reset básico */
@@ -30,7 +32,6 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* Fondo y contenedor principal */
 body {
   background: var(--fondo);
   display: flex;
@@ -45,49 +46,50 @@ body {
   max-width: 900px;
   background: var(--blanco);
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px var(--sombra);
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px var(--sombra);
 }
 
-/* Estilos del título */
+/* Título */
 h1 {
   text-align: center;
-  color: var(--color-secundario);
+  color: var(--color-primario);
   font-size: 24px;
   margin-bottom: 20px;
 }
 
-/* Botones principales - nuevo diseño */
+/* Botones principales con estilo moderno */
 .boton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, var(--btn-bg), var(--btn-hover));
+  background: var(--btn-bg);
   color: var(--blanco);
-  padding: 12px 20px;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 50px;
-  font-size: 16px;
+  border-radius: 999px; /* Forma de "píldora" */
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: all 0.3s ease-in-out;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .boton:hover {
-  background: linear-gradient(135deg, var(--btn-hover), #1e7e34);
+  background: var(--btn-hover);
   transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 .boton i {
   font-size: 20px;
 }
 
-/* Contenedores de secciones */
+/* Contenedor de secciones */
 .seccion {
   background: var(--gris-claro);
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   margin-bottom: 16px;
 }
 
@@ -107,7 +109,7 @@ input, select {
   width: 100%;
 }
 
-/* Botones de acción */
+/* Acciones con botones */
 .acciones {
   display: flex;
   justify-content: space-between;
@@ -125,28 +127,27 @@ table {
   max-width: 100%;
   border-collapse: collapse;
   background: var(--blanco);
-  border-radius: 8px;
+  border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 0 2px 5px var(--sombra);
+  margin: 0 auto;
 }
 
 th, td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid var(--gris-claro);
+  font-size: 14px;
+  word-wrap: break-word;      /* Permite que el texto baje de línea si es muy largo */
+  white-space: normal;
 }
 
 th {
   background: var(--color-primario);
   color: var(--blanco);
-  font-size: 14px;
 }
 
-td {
-  font-size: 14px;
-}
-
-/* Íconos en las tablas */
+/* Íconos de acciones dentro de la tabla */
 .accion-icono {
   font-size: 18px;
   padding: 6px;
@@ -160,11 +161,11 @@ td {
 }
 
 .accion-icono:hover {
-  background: var(--color-secundario);
+  background: var(--color-primario);
   color: var(--blanco);
 }
 
-/* Responsive */
+/* Responsivo */
 @media (max-width: 768px) {
   .container {
     padding: 16px;
