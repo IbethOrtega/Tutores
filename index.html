@@ -17,6 +17,8 @@
   --blanco: #ffffff;
   --gris-claro: #e0e0e0;
   --sombra: rgba(0, 0, 0, 0.1);
+  --color-boton: #4CAF50; /* Nuevo color para los botones */
+  --color-boton-hover: #45a049; /* Color al pasar el mouse */
 }
 
 /* Reset básico */
@@ -60,7 +62,7 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--color-primario);
+  background: var(--color-boton);
   color: var(--blanco);
   padding: 12px 16px;
   border-radius: 8px;
@@ -71,7 +73,7 @@ h1 {
 }
 
 .boton:hover {
-  background: var(--color-secundario);
+  background: var(--color-boton-hover);
 }
 
 .boton i {
@@ -122,6 +124,7 @@ table {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 5px var(--sombra);
+  margin-bottom: 16px; /* Añadido para separar las tablas */
 }
 
 th, td {
