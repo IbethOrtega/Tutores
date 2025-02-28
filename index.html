@@ -45,8 +45,10 @@
       box-shadow: 0 8px 16px var(--sombra);
       padding: 2rem;
       overflow: hidden;
-      text-align: center; /* Para centrar el contenido interno si lo deseas */
+      text-align: center;
+      /* Para centrar el contenido interno si lo deseas */
     }
+
     h1 {
       text-align: center;
       color: var(--color-primario);
@@ -60,7 +62,7 @@
       margin-bottom: 1.5rem;
       transition: all 0.3s ease;
       font-size: 12px;
-      width:auto;
+      width: auto;
     }
 
     .form-group {
@@ -124,12 +126,14 @@
     }
 
     table {
-      width: auto; /* La tabla se ajusta al ancho del contenido */
+      width: auto;
+      /* La tabla se ajusta al ancho del contenido */
       border-collapse: collapse;
       background: var(--blanco);
-      border-radius: 8px;
+      border-radius: auto;
       box-shadow: 0 4px 8px var(--sombra);
-      margin: auto; /* Centrado horizontalmente */
+      margin: auto;
+      /* Centrado horizontalmente */
       font-size: 12px;
       max-width: auto;
     }
@@ -163,67 +167,81 @@
       transform: scale(1.05);
     }
 
-    /* Toast notifications y Modal permanecen igual... */
-
-    /* Estilos para pantallas de hasta 768px */
-    @media (max-width: 768px) {
-      .container {
-        padding: 1.5rem;
-      }
-
-      h1 {
-        font-size: 1.8rem;
-      }
-
-      th,
-      td {
-        font-size: 0.85rem;
-        padding: 0.8rem;
-      }
-    }
-
-    /* Ajustes específicos para dispositivos móviles (hasta 600px) */
     @media (max-width: 600px) {
+
+      /* El contenedor ocupa todo el ancho del móvil sin márgenes extras */
       .container {
-        padding: 1rem;
-        margin: 1rem;
+        width: auto;
+        max-width: auto;
+        margin: 0;
+        padding: 0.5rem;
+        /* Ajusta para dejar un poco de espacio si quieres */
+        border-radius: 0;
+        /* Si no quieres esquinas redondeadas en móvil, quítalo */
+        box-shadow: none;
+        /* Elimina la sombra para hacerlo más “plano” */
       }
 
-      h1 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
+      /* La tabla ocupa todo el ancho del contenedor */
+      table {
+        width: auto;
+        margin: 0;
+        /* Quita márgenes */
+        border-radius: 0;
+        /* Quita el borde redondeado */
+        box-shadow: none;
+        /* Elimina sombra */
       }
 
-      .seccion {
-        padding: 1rem;
-        margin-bottom: 1rem;
-      }
-
-      .form-group {
-        gap: 0.5rem;
-      }
-
-      input,
-      select {
-        padding: 0.6rem;
-        font-size: 0.9rem;
-      }
-
-      .btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
-      }
-
-      .acciones {
-        justify-content: center;
-      }
-
-      table,
+      /* Celdas más compactas */
       th,
       td {
         font-size: 0.8rem;
+        /* Reduce el tamaño de fuente */
+        padding: 0.5rem;
+        /* Menos espacio interno */
+        text-align: center;
+        /* Opcional, si quieres centrar el contenido */
+      }
+
+      /* Encabezado más pequeño */
+      h1 {
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
+      }
+
+      /* Secciones más compactas */
+      .seccion {
+        margin-bottom: 0.8rem;
+        padding: 0.8rem;
+      }
+
+      /* Inputs y selects más pequeños */
+      input,
+      select {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+      }
+
+      /* Botones más compactos */
+      .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
       }
     }
+
+    .acciones {
+      justify-content: center;
+    }
+
+    table,
+    th,
+    td {
+      font-size: 0.7rem;
+      padding: auto;
+      width: auto;
+    }
+
 
 
     .accion-btn {
@@ -306,23 +324,6 @@
 
     .modal-content h2 {
       margin-bottom: 1rem;
-    }
-
-    /* Responsividad */
-    @media (max-width: 768px) {
-      .container {
-        padding: 1rem;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      th,
-      td {
-        font-size: 0.8rem;
-        padding: 0.8rem;
-      }
     }
   </style>
 </head>
