@@ -34,17 +34,19 @@
       font-size: 12px;
     }
 
+    /* Contenedor centrado y ajustado a su contenido */
     .container {
-      width: 90%;
-      max-width: 1000px;
+      display: inline-block;
+      width: auto;
+      max-width: auto;
       background: var(--blanco);
       margin: 2rem auto;
       border-radius: 12px;
       box-shadow: 0 8px 16px var(--sombra);
       padding: 2rem;
       overflow: hidden;
+      text-align: center; /* Para centrar el contenido interno si lo deseas */
     }
-
     h1 {
       text-align: center;
       color: var(--color-primario);
@@ -58,6 +60,7 @@
       margin-bottom: 1.5rem;
       transition: all 0.3s ease;
       font-size: 12px;
+      width:auto;
     }
 
     .form-group {
@@ -69,6 +72,7 @@
 
     input,
     select {
+      width: center;
       padding: 0.8rem;
       border: 1px solid #ccc;
       border-radius: 6px;
@@ -116,18 +120,20 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      justify-content: flex-end;
+      justify-content: center;
     }
 
     table {
-      width: 100%;
+      width: 100%; /* La tabla se ajusta al ancho del contenido */
       border-collapse: collapse;
       background: var(--blanco);
       border-radius: 8px;
       box-shadow: 0 4px 8px var(--sombra);
-      margin-top: 1rem;
+      margin: auto; /* Centrado horizontalmente */
       font-size: 12px;
+      max-width: auto;
     }
+
 
     th,
     td {
@@ -322,6 +328,7 @@
 </head>
 
 <body>
+
   <body>
     <!-- Modal de autenticación (oculto por defecto) -->
     <div id="loginModal" class="modal">
@@ -335,451 +342,452 @@
       </div>
     </div>
 
-  <!-- Contenedor de Toasts -->
-  <div id="toast-container"></div>
+    <!-- Contenedor de Toasts -->
+    <div id="toast-container"></div>
 
-  <!-- Contenedor principal de la aplicación -->
-  <div class="container" id="appContainer" style="display: none;">
-    <!-- Botones para cambiar de vista -->
-    <div class="acciones" style="justify-content: center; margin-bottom: 1rem;">
-      <button class="btn" id="btn-ver-stats" onclick="mostrarEstadisticas()">Ver Estadísticas</button>
-      <button class="btn" id="btn-ver-main" onclick="mostrarMain()" style="display:none;">Volver al Sistema</button>
-      <button class="btn" onclick="logout()">Cerrar Sesión</button>
+    <!-- Contenedor principal de la aplicación -->
+    <div class="container" id="appContainer" style="display: none;">
+      <!-- Botones para cambiar de vista -->
+      <div class="acciones" style="justify-content: center; margin-bottom: 1rem;">
+        <button class="btn" id="btn-ver-stats" onclick="mostrarEstadisticas()">Ver Estadísticas</button>
+        <button class="btn" id="btn-ver-main" onclick="mostrarMain()" style="display:none;">Volver al Sistema</button>
+        <button class="btn" onclick="logout()">Cerrar Sesión</button>
+      </div>
+
+
+
+      <!-- Vista Principal -->
+      <div id="view-main" class="view active">
+        <h1>📚 Gestor de Trabajos Académicos</h1>
+
+        <!-- Filtros avanzados -->
+        <div class="seccion">
+          <h3>Filtros Avanzados</h3>
+          <div class="form-group">
+            <input type="text" id="buscarCodigo" placeholder="Buscar por código">
+            <select id="filtrarTipo">
+              <option value="">Todos los tipos</option>
+              <option value="1">1. Desarrollo de trabajo académico.</option>
+              <option value="2">2. Acompañamiento y desarrollo de proyecto de grado.</option>
+              <option value="3">3. Ayuda en un examen/parcial.</option>
+              <option value="4">4. Tutoría y Asesoría personalizada.</option>
+              <option value="5">5. Corrección y mejora de trabajos académicos.</option>
+              <option value="6">6. Turnitin Plagio o Paquete IA.</option>
+            </select>
+            <div style="display: flex; gap: 1rem;">
+              <input type="date" id="fechaInicio">
+              <input type="date" id="fechaFin">
+            </div>
+          </div>
+          <button class="btn" onclick="filtrarTrabajos()">Filtrar</button>
+          <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar Filtros</button>
+        </div>
+
+        <!-- Formulario para agregar/editar trabajo -->
+        <div class="seccion" id="formulario">
+          <div class="form-group">
+            <select id="tipoServicio">
+              <option value="">Tipo de servicio</option>
+              <option value="1">1. Desarrollo de trabajo académico.</option>
+              <option value="2">2. Acompañamiento y desarrollo de proyecto de grado.</option>
+              <option value="3">3. Ayuda en un examen/parcial.</option>
+              <option value="4">4. Tutoría y Asesoría personalizada.</option>
+              <option value="5">5. Corrección y mejora de trabajos académicos.</option>
+              <option value="6">6. Turnitin Plagio o Paquete IA.</option>
+            </select>
+            <input type="text" id="codigo" placeholder="Código">
+            <input type="number" id="valor" placeholder="Valor">
+            <input type="date" id="fecha">
+          </div>
+          <button class="btn" onclick="guardarTrabajo()">Agregar/Actualizar Trabajo</button>
+        </div>
+
+        <!-- Botones de importación/exportación -->
+        <div class="seccion" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+          <button class="btn" onclick="exportarCSV()">Exportar CSV</button>
+          <button class="btn" onclick="exportarJSON()">Exportar JSON</button>
+          <button class="btn" onclick="exportarPDF()">Exportar PDF</button>
+          <input type="file" id="importarCSV" hidden accept=".csv">
+          <button class="btn btn-secondary" onclick="document.getElementById('importarCSV').click()">Importar
+            CSV</button>
+          <input type="file" id="importarJSON" hidden accept="application/json">
+          <button class="btn btn-secondary" onclick="document.getElementById('importarJSON').click()">Importar
+            JSON</button>
+        </div>
+
+        <!-- Estadísticas Globales -->
+        <div class="seccion">
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: space-around;">
+            <div>
+              <h3>Total Pagados</h3>
+              <div id="total-servicios">0</div>
+            </div>
+            <div>
+              <h3>Ganancias Totales</h3>
+              <div id="ganancias-totales">$0</div>
+            </div>
+            <div>
+              <h3>Pendiente Quincena 1</h3>
+              <div id="pendiente-q1">$0</div>
+            </div>
+            <div>
+              <h3>Pendiente Quincena 2</h3>
+              <div id="pendiente-q2">$0</div>
+            </div>
+          </div>
+        </div>
+        <!-- Tabla de Tipos de Trabajos (se muestra primero) -->
+        <div class="seccion">
+          <h3>Tipos de Trabajos</h3>
+          <table id="tabla_identificación">
+            <thead>
+              <tr>
+                <th>Código de Tipo de Trabajo</th>
+                <th>Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Desarrollo de trabajo académico</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Acompañamiento y desarrollo de proyecto de grado</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Ayuda en un examen/parcial</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Tutoría y Asesoría personalizada</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Corrección y mejora de trabajos académicos</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Turnitin Plagio o Paquete IA</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Trabajos Pendientes (se muestra después de la tabla de tipos) -->
+        <div class="seccion">
+          <h2>🕒 Trabajos Pendientes</h2>
+          <h3>Quincena 1</h3>
+          <table id="tabla-pendientes-q1">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Código</th>
+                <th>Valor</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Aquí se cargarán los datos de la quincena 1 -->
+            </tbody>
+          </table>
+          <h3>Quincena 2</h3>
+          <table id="tabla-pendientes-q2">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Código</th>
+                <th>Valor</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Aquí se cargarán los datos de la quincena 2 -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Trabajos Pagados -->
+        <div class="seccion">
+          <h2>✅ Trabajos Pagados</h2>
+          <div id="lista-servicios"></div>
+        </div>
+      </div>
+
+      <!-- Vista de Estadísticas -->
+      <div id="view-stats" class="view" style="display: none;">
+        <h1>📊 Estadísticas del Mes Actual</h1>
+        <div class="seccion">
+          <h3>Total Ganado este Mes: <span id="total-mes">$0</span></h3>
+        </div>
+        <div class="seccion" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+          <div style="flex: 1; min-width: 300px;">
+            <canvas id="chart-line"></canvas>
+          </div>
+          <div style="flex: 1; min-width: 300px;">
+            <canvas id="chart-bar"></canvas>
+          </div>
+          <div style="flex: 1; min-width: 300px;">
+            <canvas id="chart-pie"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
+  </body>
 
-
-
-    <!-- Vista Principal -->
-    <div id="view-main" class="view active">
-      <h1>📚 Gestor de Trabajos Académicos</h1>
-
-      <!-- Filtros avanzados -->
-      <div class="seccion">
-        <h3>Filtros Avanzados</h3>
-        <div class="form-group">
-          <input type="text" id="buscarCodigo" placeholder="Buscar por código">
-          <select id="filtrarTipo">
-            <option value="">Todos los tipos</option>
-            <option value="1">1. Desarrollo de trabajo académico.</option>
-            <option value="2">2. Acompañamiento y desarrollo de proyecto de grado.</option>
-            <option value="3">3. Ayuda en un examen/parcial.</option>
-            <option value="4">4. Tutoría y Asesoría personalizada.</option>
-            <option value="5">5. Corrección y mejora de trabajos académicos.</option>
-            <option value="6">6. Turnitin Plagio o Paquete IA.</option>
-          </select>
-          <div style="display: flex; gap: 1rem;">
-            <input type="date" id="fechaInicio">
-            <input type="date" id="fechaFin">
-          </div>
-        </div>
-        <button class="btn" onclick="filtrarTrabajos()">Filtrar</button>
-        <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar Filtros</button>
-      </div>
-
-      <!-- Formulario para agregar/editar trabajo -->
-      <div class="seccion" id="formulario">
-        <div class="form-group">
-          <select id="tipoServicio">
-            <option value="">Tipo de servicio</option>
-            <option value="1">1. Desarrollo de trabajo académico.</option>
-            <option value="2">2. Acompañamiento y desarrollo de proyecto de grado.</option>
-            <option value="3">3. Ayuda en un examen/parcial.</option>
-            <option value="4">4. Tutoría y Asesoría personalizada.</option>
-            <option value="5">5. Corrección y mejora de trabajos académicos.</option>
-            <option value="6">6. Turnitin Plagio o Paquete IA.</option>
-          </select>
-          <input type="text" id="codigo" placeholder="Código">
-          <input type="number" id="valor" placeholder="Valor">
-          <input type="date" id="fecha">
-        </div>
-        <button class="btn" onclick="guardarTrabajo()">Agregar/Actualizar Trabajo</button>
-      </div>
-
-      <!-- Botones de importación/exportación -->
-      <div class="seccion" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
-        <button class="btn" onclick="exportarCSV()">Exportar CSV</button>
-        <button class="btn" onclick="exportarJSON()">Exportar JSON</button>
-        <button class="btn" onclick="exportarPDF()">Exportar PDF</button>
-        <input type="file" id="importarCSV" hidden accept=".csv">
-        <button class="btn btn-secondary" onclick="document.getElementById('importarCSV').click()">Importar CSV</button>
-        <input type="file" id="importarJSON" hidden accept="application/json">
-        <button class="btn btn-secondary" onclick="document.getElementById('importarJSON').click()">Importar
-          JSON</button>
-      </div>
-
-      <!-- Estadísticas Globales -->
-      <div class="seccion">
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: space-around;">
-          <div>
-            <h3>Total Pagados</h3>
-            <div id="total-servicios">0</div>
-          </div>
-          <div>
-            <h3>Ganancias Totales</h3>
-            <div id="ganancias-totales">$0</div>
-          </div>
-          <div>
-            <h3>Pendiente Quincena 1</h3>
-            <div id="pendiente-q1">$0</div>
-          </div>
-          <div>
-            <h3>Pendiente Quincena 2</h3>
-            <div id="pendiente-q2">$0</div>
-          </div>
-        </div>
-      </div>
-      <!-- Tabla de Tipos de Trabajos (se muestra primero) -->
-      <div class="seccion">
-        <h3>Tipos de Trabajos</h3>
-        <table id="tabla_identificación">
-          <thead>
-            <tr>
-              <th>Código de Tipo de Trabajo</th>
-              <th>Tipo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Desarrollo de trabajo académico</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Acompañamiento y desarrollo de proyecto de grado</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Ayuda en un examen/parcial</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>Tutoría y Asesoría personalizada</td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>Corrección y mejora de trabajos académicos</td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td>Turnitin Plagio o Paquete IA</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <!-- Trabajos Pendientes (se muestra después de la tabla de tipos) -->
-      <div class="seccion">
-        <h2>🕒 Trabajos Pendientes</h2>
-        <h3>Quincena 1</h3>
-        <table id="tabla-pendientes-q1">
-          <thead>
-            <tr>
-              <th>Tipo</th>
-              <th>Código</th>
-              <th>Valor</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Aquí se cargarán los datos de la quincena 1 -->
-          </tbody>
-        </table>
-        <h3>Quincena 2</h3>
-        <table id="tabla-pendientes-q2">
-          <thead>
-            <tr>
-              <th>Tipo</th>
-              <th>Código</th>
-              <th>Valor</th>
-              <th>Fecha</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Aquí se cargarán los datos de la quincena 2 -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Trabajos Pagados -->
-      <div class="seccion">
-        <h2>✅ Trabajos Pagados</h2>
-        <div id="lista-servicios"></div>
-      </div>
-    </div>
-
-    <!-- Vista de Estadísticas -->
-    <div id="view-stats" class="view" style="display: none;">
-      <h1>📊 Estadísticas del Mes Actual</h1>
-      <div class="seccion">
-        <h3>Total Ganado este Mes: <span id="total-mes">$0</span></h3>
-      </div>
-      <div class="seccion" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
-        <div style="flex: 1; min-width: 300px;">
-          <canvas id="chart-line"></canvas>
-        </div>
-        <div style="flex: 1; min-width: 300px;">
-          <canvas id="chart-bar"></canvas>
-        </div>
-        <div style="flex: 1; min-width: 300px;">
-          <canvas id="chart-pie"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-
-<script>
-  /* ----------------- Autenticación ----------------- */
-  function login() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
-    // Autenticación dummy: usuario "admin", contraseña "admin"
-    if (username === "admin" && password === "admin") {
-      // Guardamos en localStorage que la sesión está iniciada
-      localStorage.setItem("isLoggedIn", "true");
-      document.getElementById('loginModal').classList.remove('active');
-      document.getElementById('appContainer').style.display = 'block';
-      showToast("Inicio de sesión exitoso", "success");
-    } else {
-      showToast("Credenciales incorrectas", "error");
+  <script>
+    /* ----------------- Autenticación ----------------- */
+    function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      // Autenticación dummy: usuario "admin", contraseña "admin"
+      if (username === "admin" && password === "admin") {
+        // Guardamos en localStorage que la sesión está iniciada
+        localStorage.setItem("isLoggedIn", "true");
+        document.getElementById('loginModal').classList.remove('active');
+        document.getElementById('appContainer').style.display = 'block';
+        showToast("Inicio de sesión exitoso", "success");
+      } else {
+        showToast("Credenciales incorrectas", "error");
+      }
     }
-  }
-  // Si no hay sesión iniciada, se activa el modal de login.
-  if (!localStorage.getItem("isLoggedIn")) {
+    // Si no hay sesión iniciada, se activa el modal de login.
+    if (!localStorage.getItem("isLoggedIn")) {
       document.getElementById('loginModal').classList.add('active');
     } else {
       document.getElementById('appContainer').style.display = 'block';
     }
-  // Función para verificar la sesión al cargar la página
-  function checkSession() {
-    if (localStorage.getItem("isLoggedIn") === "true") {
-      document.getElementById('loginModal').classList.remove('active');
-      document.getElementById('appContainer').style.display = 'block';
+    // Función para verificar la sesión al cargar la página
+    function checkSession() {
+      if (localStorage.getItem("isLoggedIn") === "true") {
+        document.getElementById('loginModal').classList.remove('active');
+        document.getElementById('appContainer').style.display = 'block';
+      }
     }
-  }
 
-  // Función para cerrar sesión
-  function logout() {
-    // Removemos la información de la sesión
-    localStorage.removeItem("isLoggedIn");
-    // Opcionalmente, recargamos la página o redirigimos al login
-    location.reload();
-  }
-
-  // Verificar si ya hay sesión activa al cargar la página
-  window.onload = checkSession;
-
-
-  /* ----------------- Toast Notifications ----------------- */
-  function showToast(message, type = "info") {
-    const toastContainer = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    if (type === "error") {
-      toast.style.background = "#e74c3c";
-    } else if (type === "success") {
-      toast.style.background = "#27ae60";
+    // Función para cerrar sesión
+    function logout() {
+      // Removemos la información de la sesión
+      localStorage.removeItem("isLoggedIn");
+      // Opcionalmente, recargamos la página o redirigimos al login
+      location.reload();
     }
-    toastContainer.appendChild(toast);
-    setTimeout(() => { toast.remove(); }, 3500);
-  }
 
-  /* ----------------- Gestión de Datos ----------------- */
-  let servicios = JSON.parse(localStorage.getItem('servicios')) || [];
-  let pendientes = JSON.parse(localStorage.getItem('pendientes')) || [];
-  let editMode = { active: false, esPendiente: true, codigo: null };
+    // Verificar si ya hay sesión activa al cargar la página
+    window.onload = checkSession;
 
-  // Validar campos y evitar códigos duplicados
-  function validarCampos(tipo, codigo, valor, fecha) {
-    if (!tipo || !codigo || !valor || !fecha) {
-      showToast("Completa todos los campos", "error");
-      return false;
+
+    /* ----------------- Toast Notifications ----------------- */
+    function showToast(message, type = "info") {
+      const toastContainer = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      if (type === "error") {
+        toast.style.background = "#e74c3c";
+      } else if (type === "success") {
+        toast.style.background = "#27ae60";
+      }
+      toastContainer.appendChild(toast);
+      setTimeout(() => { toast.remove(); }, 3500);
     }
-    if (!editMode.active) {
-      const exists = pendientes.concat(servicios).some(s => s.codigo === codigo);
-      if (exists) {
-        showToast("El código ya existe", "error");
+
+    /* ----------------- Gestión de Datos ----------------- */
+    let servicios = JSON.parse(localStorage.getItem('servicios')) || [];
+    let pendientes = JSON.parse(localStorage.getItem('pendientes')) || [];
+    let editMode = { active: false, esPendiente: true, codigo: null };
+
+    // Validar campos y evitar códigos duplicados
+    function validarCampos(tipo, codigo, valor, fecha) {
+      if (!tipo || !codigo || !valor || !fecha) {
+        showToast("Completa todos los campos", "error");
         return false;
       }
-    }
-    return true;
-  }
-
-  // Convertir fecha en formato local
-  function parseDateLocal(dateStr) {
-    const parts = dateStr.split("-");
-    return new Date(parts[0], parts[1] - 1, parts[2]);
-  }
-
-  // Guardar o actualizar un trabajo
-  function guardarTrabajo() {
-    const tipo = document.getElementById('tipoServicio').value;
-    const codigo = document.getElementById('codigo').value.trim();
-    const valor = document.getElementById('valor').value;
-    const fecha = document.getElementById('fecha').value;
-
-    if (!validarCampos(tipo, codigo, valor, fecha)) return;
-
-    let fechaIngresada = fecha;
-    if (editMode.active) {
-      if (editMode.esPendiente) {
-        pendientes = pendientes.map(s => s.codigo === editMode.codigo ? { tipo, codigo, valor, fecha, entregado: s.entregado } : s);
-      } else {
-        servicios = servicios.map(s => s.codigo === editMode.codigo ? { tipo, codigo, valor, fecha } : s);
+      if (!editMode.active) {
+        const exists = pendientes.concat(servicios).some(s => s.codigo === codigo);
+        if (exists) {
+          showToast("El código ya existe", "error");
+          return false;
+        }
       }
-      editMode = { active: false, esPendiente: true, codigo: null };
-      showToast("Registro actualizado", "success");
-    } else {
-      pendientes.push({ tipo, codigo, valor, fecha, entregado: false });
-      showToast("Trabajo agregado", "success");
+      return true;
     }
-    guardarDatos();
-    actualizarTodo();
-    limpiarFormulario();
 
-    let newDate = parseDateLocal(fechaIngresada);
-    if (newDate.getDate() <= 15) {
-      document.getElementById('tabla-pendientes-q1').scrollIntoView({ behavior: 'smooth' });
-    } else {
-      document.getElementById('tabla-pendientes-q2').scrollIntoView({ behavior: 'smooth' });
+    // Convertir fecha en formato local
+    function parseDateLocal(dateStr) {
+      const parts = dateStr.split("-");
+      return new Date(parts[0], parts[1] - 1, parts[2]);
     }
-  }
 
-  function limpiarFormulario() {
-    document.getElementById('tipoServicio').value = '';
-    document.getElementById('codigo').value = '';
-    document.getElementById('valor').value = '';
-    document.getElementById('fecha').value = '';
-  }
+    // Guardar o actualizar un trabajo
+    function guardarTrabajo() {
+      const tipo = document.getElementById('tipoServicio').value;
+      const codigo = document.getElementById('codigo').value.trim();
+      const valor = document.getElementById('valor').value;
+      const fecha = document.getElementById('fecha').value;
 
-  function marcarComoPagado(codigo) {
-    const index = pendientes.findIndex(s => s.codigo === codigo);
-    if (index !== -1) {
-      const [trabajo] = pendientes.splice(index, 1);
-      servicios.push(trabajo);
-      showToast("Trabajo marcado como pagado", "success");
+      if (!validarCampos(tipo, codigo, valor, fecha)) return;
+
+      let fechaIngresada = fecha;
+      if (editMode.active) {
+        if (editMode.esPendiente) {
+          pendientes = pendientes.map(s => s.codigo === editMode.codigo ? { tipo, codigo, valor, fecha, entregado: s.entregado } : s);
+        } else {
+          servicios = servicios.map(s => s.codigo === editMode.codigo ? { tipo, codigo, valor, fecha } : s);
+        }
+        editMode = { active: false, esPendiente: true, codigo: null };
+        showToast("Registro actualizado", "success");
+      } else {
+        pendientes.push({ tipo, codigo, valor, fecha, entregado: false });
+        showToast("Trabajo agregado", "success");
+      }
+      guardarDatos();
+      actualizarTodo();
+      limpiarFormulario();
+
+      let newDate = parseDateLocal(fechaIngresada);
+      if (newDate.getDate() <= 15) {
+        document.getElementById('tabla-pendientes-q1').scrollIntoView({ behavior: 'smooth' });
+      } else {
+        document.getElementById('tabla-pendientes-q2').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function limpiarFormulario() {
+      document.getElementById('tipoServicio').value = '';
+      document.getElementById('codigo').value = '';
+      document.getElementById('valor').value = '';
+      document.getElementById('fecha').value = '';
+    }
+
+    function marcarComoPagado(codigo) {
+      const index = pendientes.findIndex(s => s.codigo === codigo);
+      if (index !== -1) {
+        const [trabajo] = pendientes.splice(index, 1);
+        servicios.push(trabajo);
+        showToast("Trabajo marcado como pagado", "success");
+        guardarDatos();
+        actualizarTodo();
+      }
+    }
+
+    function marcarComoEntregado(codigo) {
+      const trabajo = pendientes.find(s => s.codigo === codigo);
+      if (trabajo) {
+        trabajo.entregado = true;
+        showToast("Trabajo marcado como entregado", "success");
+        guardarDatos();
+        actualizarTodo();
+      }
+    }
+
+    function editarServicio(codigo, esPendiente = true) {
+      const trabajo = esPendiente ? pendientes.find(s => s.codigo === codigo) : servicios.find(s => s.codigo === codigo);
+      if (trabajo) {
+        document.getElementById('tipoServicio').value = trabajo.tipo;
+        document.getElementById('codigo').value = trabajo.codigo;
+        document.getElementById('valor').value = trabajo.valor;
+        document.getElementById('fecha').value = trabajo.fecha;
+        editMode = { active: true, esPendiente, codigo };
+        document.getElementById('tipoServicio').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function eliminarServicio(codigo, esPendiente = true) {
+      if (!confirm('¿Eliminar este registro?')) return;
+      if (esPendiente) {
+        pendientes = pendientes.filter(s => s.codigo !== codigo);
+      } else {
+        servicios = servicios.filter(s => s.codigo !== codigo);
+      }
+      showToast("Registro eliminado", "error");
       guardarDatos();
       actualizarTodo();
     }
-  }
 
-  function marcarComoEntregado(codigo) {
-    const trabajo = pendientes.find(s => s.codigo === codigo);
-    if (trabajo) {
-      trabajo.entregado = true;
-      showToast("Trabajo marcado como entregado", "success");
-      guardarDatos();
+    // Filtrar trabajos por código, tipo y rango de fechas
+    function filtrarTrabajos() {
+      const codigoBuscado = document.getElementById('buscarCodigo').value.trim();
+      const tipoFiltrado = document.getElementById('filtrarTipo').value;
+      const fechaInicio = document.getElementById('fechaInicio').value;
+      const fechaFin = document.getElementById('fechaFin').value;
+
+      let resultadosPendientes = pendientes.filter(s => {
+        let match = true;
+        if (codigoBuscado) match = match && s.codigo.includes(codigoBuscado);
+        if (tipoFiltrado) match = match && s.tipo === tipoFiltrado;
+        if (fechaInicio) match = match && parseDateLocal(s.fecha) >= new Date(fechaInicio);
+        if (fechaFin) match = match && parseDateLocal(s.fecha) <= new Date(fechaFin);
+        return match;
+      });
+      let resultadosServicios = servicios.filter(s => {
+        let match = true;
+        if (codigoBuscado) match = match && s.codigo.includes(codigoBuscado);
+        if (tipoFiltrado) match = match && s.tipo === tipoFiltrado;
+        if (fechaInicio) match = match && parseDateLocal(s.fecha) >= new Date(fechaInicio);
+        if (fechaFin) match = match && parseDateLocal(s.fecha) <= new Date(fechaFin);
+        return match;
+      });
+
+      actualizarTablas(resultadosPendientes, resultadosServicios);
+
+      if (resultadosPendientes.length > 0) {
+        document.getElementById('tabla-pendientes-q1').scrollIntoView({ behavior: 'smooth' });
+      } else if (resultadosServicios.length > 0) {
+        document.getElementById('lista-servicios').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function limpiarFiltros() {
+      document.getElementById('buscarCodigo').value = '';
+      document.getElementById('filtrarTipo').value = '';
+      document.getElementById('fechaInicio').value = '';
+      document.getElementById('fechaFin').value = '';
       actualizarTodo();
     }
-  }
 
-  function editarServicio(codigo, esPendiente = true) {
-    const trabajo = esPendiente ? pendientes.find(s => s.codigo === codigo) : servicios.find(s => s.codigo === codigo);
-    if (trabajo) {
-      document.getElementById('tipoServicio').value = trabajo.tipo;
-      document.getElementById('codigo').value = trabajo.codigo;
-      document.getElementById('valor').value = trabajo.valor;
-      document.getElementById('fecha').value = trabajo.fecha;
-      editMode = { active: true, esPendiente, codigo };
-      document.getElementById('tipoServicio').scrollIntoView({ behavior: 'smooth' });
+    function actualizarTodo() {
+      actualizarEstadisticasGlobales();
+      actualizarTablas();
     }
-  }
 
-  function eliminarServicio(codigo, esPendiente = true) {
-    if (!confirm('¿Eliminar este registro?')) return;
-    if (esPendiente) {
-      pendientes = pendientes.filter(s => s.codigo !== codigo);
-    } else {
-      servicios = servicios.filter(s => s.codigo !== codigo);
+    function actualizarEstadisticasGlobales() {
+      document.getElementById('total-servicios').textContent = servicios.length;
+      const totalPagado = servicios.reduce((acc, s) => acc + Number(s.valor), 0);
+      document.getElementById('ganancias-totales').textContent = `$${totalPagado.toLocaleString()}`;
+      const pendienteQ1 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() <= 15)
+        .reduce((acc, s) => acc + Number(s.valor), 0);
+      const pendienteQ2 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() > 15)
+        .reduce((acc, s) => acc + Number(s.valor), 0);
+      document.getElementById('pendiente-q1').textContent = `$${pendienteQ1.toLocaleString()}`;
+      document.getElementById('pendiente-q2').textContent = `$${pendienteQ2.toLocaleString()}`;
+
+      const hoy = new Date();
+      const mesActual = hoy.getMonth();
+      const anioActual = hoy.getFullYear();
+      const totalMes = servicios.filter(s => {
+        const f = parseDateLocal(s.fecha);
+        return f.getMonth() === mesActual && f.getFullYear() === anioActual;
+      }).reduce((acc, s) => acc + Number(s.valor), 0);
+      document.getElementById('total-mes').textContent = `$${totalMes.toLocaleString()}`;
     }
-    showToast("Registro eliminado", "error");
-    guardarDatos();
-    actualizarTodo();
-  }
 
-  // Filtrar trabajos por código, tipo y rango de fechas
-  function filtrarTrabajos() {
-    const codigoBuscado = document.getElementById('buscarCodigo').value.trim();
-    const tipoFiltrado = document.getElementById('filtrarTipo').value;
-    const fechaInicio = document.getElementById('fechaInicio').value;
-    const fechaFin = document.getElementById('fechaFin').value;
+    function actualizarTablas(filtradosPendientes = pendientes, filtradosServicios = servicios) {
+      const pendientesQ1 = filtradosPendientes.filter(s => parseDateLocal(s.fecha).getDate() <= 15);
+      const pendientesQ2 = filtradosPendientes.filter(s => parseDateLocal(s.fecha).getDate() > 15);
 
-    let resultadosPendientes = pendientes.filter(s => {
-      let match = true;
-      if (codigoBuscado) match = match && s.codigo.includes(codigoBuscado);
-      if (tipoFiltrado) match = match && s.tipo === tipoFiltrado;
-      if (fechaInicio) match = match && parseDateLocal(s.fecha) >= new Date(fechaInicio);
-      if (fechaFin) match = match && parseDateLocal(s.fecha) <= new Date(fechaFin);
-      return match;
-    });
-    let resultadosServicios = servicios.filter(s => {
-      let match = true;
-      if (codigoBuscado) match = match && s.codigo.includes(codigoBuscado);
-      if (tipoFiltrado) match = match && s.tipo === tipoFiltrado;
-      if (fechaInicio) match = match && parseDateLocal(s.fecha) >= new Date(fechaInicio);
-      if (fechaFin) match = match && parseDateLocal(s.fecha) <= new Date(fechaFin);
-      return match;
-    });
-
-    actualizarTablas(resultadosPendientes, resultadosServicios);
-
-    if (resultadosPendientes.length > 0) {
-      document.getElementById('tabla-pendientes-q1').scrollIntoView({ behavior: 'smooth' });
-    } else if (resultadosServicios.length > 0) {
-      document.getElementById('lista-servicios').scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-
-  function limpiarFiltros() {
-    document.getElementById('buscarCodigo').value = '';
-    document.getElementById('filtrarTipo').value = '';
-    document.getElementById('fechaInicio').value = '';
-    document.getElementById('fechaFin').value = '';
-    actualizarTodo();
-  }
-
-  function actualizarTodo() {
-    actualizarEstadisticasGlobales();
-    actualizarTablas();
-  }
-
-  function actualizarEstadisticasGlobales() {
-    document.getElementById('total-servicios').textContent = servicios.length;
-    const totalPagado = servicios.reduce((acc, s) => acc + Number(s.valor), 0);
-    document.getElementById('ganancias-totales').textContent = `$${totalPagado.toLocaleString()}`;
-    const pendienteQ1 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() <= 15)
-      .reduce((acc, s) => acc + Number(s.valor), 0);
-    const pendienteQ2 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() > 15)
-      .reduce((acc, s) => acc + Number(s.valor), 0);
-    document.getElementById('pendiente-q1').textContent = `$${pendienteQ1.toLocaleString()}`;
-    document.getElementById('pendiente-q2').textContent = `$${pendienteQ2.toLocaleString()}`;
-
-    const hoy = new Date();
-    const mesActual = hoy.getMonth();
-    const anioActual = hoy.getFullYear();
-    const totalMes = servicios.filter(s => {
-      const f = parseDateLocal(s.fecha);
-      return f.getMonth() === mesActual && f.getFullYear() === anioActual;
-    }).reduce((acc, s) => acc + Number(s.valor), 0);
-    document.getElementById('total-mes').textContent = `$${totalMes.toLocaleString()}`;
-  }
-
-  function actualizarTablas(filtradosPendientes = pendientes, filtradosServicios = servicios) {
-    const pendientesQ1 = filtradosPendientes.filter(s => parseDateLocal(s.fecha).getDate() <= 15);
-    const pendientesQ2 = filtradosPendientes.filter(s => parseDateLocal(s.fecha).getDate() > 15);
-
-    document.querySelector('#tabla-pendientes-q1 tbody').innerHTML = pendientesQ1.map(s => `
+      document.querySelector('#tabla-pendientes-q1 tbody').innerHTML = pendientesQ1.map(s => `
         <tr>
           <td>${s.tipo}</td>
           <td>${s.codigo}</td>
           <td>$${Number(s.valor).toLocaleString()}</td>
           <td>${parseDateLocal(s.fecha).toLocaleDateString()}</td>
           <td>
-            <button class="accion-btn" onclick="marcarComoPagado('${s.codigo}')">✅ Pagado</button>
+            <button class="accion-btn" onclick="marcarComoPagado('${s.codigo}')">✅</button>
             <button class="accion-btn" onclick="marcarComoEntregado('${s.codigo}')">
-              ${s.entregado ? '✔️ Entregado' : '📦 Entregar'}
+              ${s.entregado ? '✔️' : '📦'}
             </button>
             <button class="accion-btn" onclick="editarServicio('${s.codigo}', true)">✏️</button>
             <button class="accion-btn" onclick="eliminarServicio('${s.codigo}', true)">🗑️</button>
@@ -787,16 +795,16 @@
         </tr>
       `).join('');
 
-    document.querySelector('#tabla-pendientes-q2 tbody').innerHTML = pendientesQ2.map(s => `
+      document.querySelector('#tabla-pendientes-q2 tbody').innerHTML = pendientesQ2.map(s => `
         <tr>
           <td>${s.tipo}</td>
           <td>${s.codigo}</td>
           <td>$${Number(s.valor).toLocaleString()}</td>
           <td>${parseDateLocal(s.fecha).toLocaleDateString()}</td>
           <td>
-            <button class="accion-btn" onclick="marcarComoPagado('${s.codigo}')">✅ Pagado</button>
+            <button class="accion-btn" onclick="marcarComoPagado('${s.codigo}')">✅</button>
             <button class="accion-btn" onclick="marcarComoEntregado('${s.codigo}')">
-              ${s.entregado ? '✔️ Entregado' : '📦 Entregar'}
+              ${s.entregado ? '✔️' : '📦'}
             </button>
             <button class="accion-btn" onclick="editarServicio('${s.codigo}', true)">✏️</button>
             <button class="accion-btn" onclick="eliminarServicio('${s.codigo}', true)">🗑️</button>
@@ -804,42 +812,42 @@
         </tr>
       `).join('');
 
-    let grupos = {};
-    filtradosServicios.forEach(s => {
-      const f = parseDateLocal(s.fecha);
-      const quincena = f.getDate() <= 15 ? "Quincena 1" : "Quincena 2";
-      const month = f.toLocaleString("es-ES", { month: "long" });
-      const year = f.getFullYear();
-      const key = `${quincena} ${month} ${year}`;
-      if (!grupos[key]) grupos[key] = [];
-      grupos[key].push(s);
-    });
+      let grupos = {};
+      filtradosServicios.forEach(s => {
+        const f = parseDateLocal(s.fecha);
+        const quincena = f.getDate() <= 15 ? "Quincena 1" : "Quincena 2";
+        const month = f.toLocaleString("es-ES", { month: "long" });
+        const year = f.getFullYear();
+        const key = `${quincena} ${month} ${year}`;
+        if (!grupos[key]) grupos[key] = [];
+        grupos[key].push(s);
+      });
 
-    let keys = Object.keys(grupos);
-    const monthMap = {
-      "enero": 1, "febrero": 2, "marzo": 3, "abril": 4,
-      "mayo": 5, "junio": 6, "julio": 7, "agosto": 8,
-      "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12
-    };
-    keys.sort((a, b) => {
-      let partsA = a.split(" ");
-      let partsB = b.split(" ");
-      let yearA = parseInt(partsA[3]);
-      let yearB = parseInt(partsB[3]);
-      if (yearA !== yearB) return yearB - yearA;
-      let monthA = monthMap[partsA[2].toLowerCase()] || 0;
-      let monthB = monthMap[partsB[2].toLowerCase()] || 0;
-      if (monthA !== monthB) return monthB - monthA;
-      let quincenaA = parseInt(partsA[1]);
-      let quincenaB = parseInt(partsB[1]);
-      return quincenaB - quincenaA;
-    });
+      let keys = Object.keys(grupos);
+      const monthMap = {
+        "enero": 1, "febrero": 2, "marzo": 3, "abril": 4,
+        "mayo": 5, "junio": 6, "julio": 7, "agosto": 8,
+        "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12
+      };
+      keys.sort((a, b) => {
+        let partsA = a.split(" ");
+        let partsB = b.split(" ");
+        let yearA = parseInt(partsA[3]);
+        let yearB = parseInt(partsB[3]);
+        if (yearA !== yearB) return yearB - yearA;
+        let monthA = monthMap[partsA[2].toLowerCase()] || 0;
+        let monthB = monthMap[partsB[2].toLowerCase()] || 0;
+        if (monthA !== monthB) return monthB - monthA;
+        let quincenaA = parseInt(partsA[1]);
+        let quincenaB = parseInt(partsB[1]);
+        return quincenaB - quincenaA;
+      });
 
-    let htmlGrupos = "";
-    keys.forEach(key => {
-      const totalGrupo = grupos[key].reduce((acc, s) => acc + Number(s.valor), 0);
-      let groupId = "grupo_" + key.replace(/\s+/g, "_");
-      htmlGrupos += `
+      let htmlGrupos = "";
+      keys.forEach(key => {
+        const totalGrupo = grupos[key].reduce((acc, s) => acc + Number(s.valor), 0);
+        let groupId = "grupo_" + key.replace(/\s+/g, "_");
+        htmlGrupos += `
           <div id="${groupId}" class="grupo-pagado">
             <h3 class="grupo-header" onclick="toggleGroup(this)">${key} - Total: $${totalGrupo.toLocaleString()}</h3>
             <div class="group-content">
@@ -871,249 +879,249 @@
             </div>
           </div>
         `;
-    });
-    document.getElementById('lista-servicios').innerHTML = htmlGrupos;
-  }
-
-  function toggleGroup(element) {
-    const content = element.nextElementSibling;
-    content.style.display = content.style.display === "none" ? "block" : "none";
-  }
-
-  function guardarDatos() {
-    localStorage.setItem('servicios', JSON.stringify(servicios));
-    localStorage.setItem('pendientes', JSON.stringify(pendientes));
-  }
-
-  /* ----------------- Exportaciones ----------------- */
-  function exportarCSV() {
-    const header = ['Estado', 'Tipo', 'Código', 'Valor', 'Fecha'].join(',');
-    const datosPagados = servicios.map(s => ['pagado', s.tipo, s.codigo, s.valor, s.fecha].join(','));
-    const datosPendientes = pendientes.map(s => ['pendiente', s.tipo, s.codigo, s.valor, s.fecha].join(','));
-    const csvContent = [header, ...datosPagados, ...datosPendientes].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `backup-trabajos-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function exportarJSON() {
-    const db = { servicios, pendientes };
-    const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `base-datos-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-  // Importar JSON
-  document.getElementById('importarJSON').addEventListener('change', function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      try {
-        const db = JSON.parse(e.target.result);
-        // Asegurarse de que se reciben arrays válidos
-        servicios = Array.isArray(db.servicios) ? db.servicios : [];
-        pendientes = Array.isArray(db.pendientes) ? db.pendientes : [];
-        guardarDatos();
-        actualizarTodo();
-        showToast("Base de datos importada correctamente", "success");
-      } catch (error) {
-        console.error(error);
-        showToast("Error al importar el archivo JSON", "error");
-      }
+      });
+      document.getElementById('lista-servicios').innerHTML = htmlGrupos;
     }
-    reader.readAsText(file);
-  });
 
-  // Importar CSV
-  document.getElementById('importarCSV').addEventListener('change', function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      try {
-        const csv = e.target.result;
-        // Separa el contenido en líneas y elimina líneas vacías
-        const lines = csv.split('\n').filter(line => line.trim().length > 0);
-        // Si la primera línea contiene "estado", se asume que es el encabezado
-        if (lines[0].toLowerCase().includes("estado")) {
-          lines.shift();
+    function toggleGroup(element) {
+      const content = element.nextElementSibling;
+      content.style.display = content.style.display === "none" ? "block" : "none";
+    }
+
+    function guardarDatos() {
+      localStorage.setItem('servicios', JSON.stringify(servicios));
+      localStorage.setItem('pendientes', JSON.stringify(pendientes));
+    }
+
+    /* ----------------- Exportaciones ----------------- */
+    function exportarCSV() {
+      const header = ['Estado', 'Tipo', 'Código', 'Valor', 'Fecha'].join(',');
+      const datosPagados = servicios.map(s => ['pagado', s.tipo, s.codigo, s.valor, s.fecha].join(','));
+      const datosPendientes = pendientes.map(s => ['pendiente', s.tipo, s.codigo, s.valor, s.fecha].join(','));
+      const csvContent = [header, ...datosPagados, ...datosPendientes].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `backup-trabajos-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportarJSON() {
+      const db = { servicios, pendientes };
+      const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `base-datos-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    // Importar JSON
+    document.getElementById('importarJSON').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const db = JSON.parse(e.target.result);
+          // Asegurarse de que se reciben arrays válidos
+          servicios = Array.isArray(db.servicios) ? db.servicios : [];
+          pendientes = Array.isArray(db.pendientes) ? db.pendientes : [];
+          guardarDatos();
+          actualizarTodo();
+          showToast("Base de datos importada correctamente", "success");
+        } catch (error) {
+          console.error(error);
+          showToast("Error al importar el archivo JSON", "error");
         }
-        // Reiniciar arrays
-        servicios = [];
-        pendientes = [];
-        lines.forEach(line => {
-          const parts = line.split(',').map(p => p.trim());
-          if (parts.length < 5) return; // omitir líneas con datos incompletos
-          const [estado, tipo, codigo, valor, fecha] = parts;
-          if (!tipo) return;
-          const registro = { tipo, codigo, valor, fecha, entregado: false };
-          if (estado.toLowerCase() === 'pagado') {
-            servicios.push(registro);
-          } else {
-            pendientes.push(registro);
+      }
+      reader.readAsText(file);
+    });
+
+    // Importar CSV
+    document.getElementById('importarCSV').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const csv = e.target.result;
+          // Separa el contenido en líneas y elimina líneas vacías
+          const lines = csv.split('\n').filter(line => line.trim().length > 0);
+          // Si la primera línea contiene "estado", se asume que es el encabezado
+          if (lines[0].toLowerCase().includes("estado")) {
+            lines.shift();
+          }
+          // Reiniciar arrays
+          servicios = [];
+          pendientes = [];
+          lines.forEach(line => {
+            const parts = line.split(',').map(p => p.trim());
+            if (parts.length < 5) return; // omitir líneas con datos incompletos
+            const [estado, tipo, codigo, valor, fecha] = parts;
+            if (!tipo) return;
+            const registro = { tipo, codigo, valor, fecha, entregado: false };
+            if (estado.toLowerCase() === 'pagado') {
+              servicios.push(registro);
+            } else {
+              pendientes.push(registro);
+            }
+          });
+          guardarDatos();
+          actualizarTodo();
+          showToast(`Importación exitosa: ${lines.length} registros cargados`, "success");
+        } catch (error) {
+          console.error(error);
+          showToast("Error al importar el archivo CSV", "error");
+        }
+      }
+      reader.readAsText(file);
+    });
+
+
+    function exportarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text("Reporte de Trabajos Académicos", 10, 20);
+      doc.setFontSize(12);
+      doc.text(`Total Trabajos Pagados: ${servicios.length}`, 10, 40);
+      const totalPagado = servicios.reduce((acc, s) => acc + Number(s.valor), 0);
+      doc.text(`Ganancias Totales: $${totalPagado.toLocaleString()}`, 10, 50);
+      const pendienteQ1 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() <= 15)
+        .reduce((acc, s) => acc + Number(s.valor), 0);
+      const pendienteQ2 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() > 15)
+        .reduce((acc, s) => acc + Number(s.valor), 0);
+      doc.text(`Pendiente Quincena 1: $${pendienteQ1.toLocaleString()}`, 10, 60);
+      doc.text(`Pendiente Quincena 2: $${pendienteQ2.toLocaleString()}`, 10, 70);
+      doc.save(`reporte-${new Date().toISOString().split('T')[0]}.pdf`);
+    }
+
+    /* ----------------- Cambio de Vistas ----------------- */
+    function mostrarEstadisticas() {
+      document.getElementById('view-main').style.display = "none";
+      document.getElementById('view-stats').style.display = "block";
+      document.getElementById('btn-ver-stats').style.display = "none";
+      document.getElementById('btn-ver-main').style.display = "block";
+      actualizarEstadisticasGlobales();
+      actualizarCharts();
+    }
+
+    function mostrarMain() {
+      document.getElementById('view-stats').style.display = "none";
+      document.getElementById('view-main').style.display = "block";
+      document.getElementById('btn-ver-main').style.display = "none";
+      document.getElementById('btn-ver-stats').style.display = "block";
+    }
+
+    /* ----------------- Gráficos con Chart.js ----------------- */
+    let chartLine, chartBar, chartPie;
+    function actualizarCharts() {
+      const hoy = new Date();
+      const mesActual = hoy.getMonth();
+      const anioActual = hoy.getFullYear();
+      const trabajosMes = servicios.filter(s => {
+        const f = parseDateLocal(s.fecha);
+        return f.getMonth() === mesActual && f.getFullYear() === anioActual;
+      });
+      const dias = Array.from({ length: 31 }, (_, i) => i + 1);
+      const gananciasPorDia = dias.map(dia =>
+        trabajosMes.filter(s => parseDateLocal(s.fecha).getDate() === dia)
+          .reduce((acc, s) => acc + Number(s.valor), 0)
+      );
+      const tipos = ["academico", "parcial", "proyecto", "correccion"];
+      const gananciasPorTipo = tipos.map(tipo =>
+        trabajosMes.filter(s => s.tipo === tipo)
+          .reduce((acc, s) => acc + Number(s.valor), 0)
+      );
+
+      if (chartLine) {
+        chartLine.data.labels = dias;
+        chartLine.data.datasets[0].data = gananciasPorDia;
+        chartLine.update();
+      } else {
+        const ctxLine = document.getElementById('chart-line').getContext('2d');
+        chartLine = new Chart(ctxLine, {
+          type: 'line',
+          data: {
+            labels: dias,
+            datasets: [{
+              label: 'Ganancias por día',
+              data: gananciasPorDia,
+              backgroundColor: 'rgba(74, 144, 226, 0.2)',
+              borderColor: 'rgba(74, 144, 226, 1)',
+              borderWidth: 2,
+              fill: true
+            }]
+          },
+          options: {
+            scales: {
+              x: { title: { display: true, text: 'Día del mes' } },
+              y: { title: { display: true, text: 'Ganancias' } }
+            }
           }
         });
-        guardarDatos();
-        actualizarTodo();
-        showToast(`Importación exitosa: ${lines.length} registros cargados`, "success");
-      } catch (error) {
-        console.error(error);
-        showToast("Error al importar el archivo CSV", "error");
+      }
+
+      if (chartBar) {
+        chartBar.data.labels = tipos;
+        chartBar.data.datasets[0].data = gananciasPorTipo;
+        chartBar.update();
+      } else {
+        const ctxBar = document.getElementById('chart-bar').getContext('2d');
+        chartBar = new Chart(ctxBar, {
+          type: 'bar',
+          data: {
+            labels: tipos,
+            datasets: [{
+              label: 'Ganancias por tipo',
+              data: gananciasPorTipo,
+              backgroundColor: ['#34495e', '#2ecc71', '#e67e22', '#e74c3c']
+            }]
+          },
+          options: {
+            scales: {
+              y: { beginAtZero: true, title: { display: true, text: 'Ganancias' } }
+            }
+          }
+        });
+      }
+
+      if (chartPie) {
+        chartPie.data.labels = tipos;
+        chartPie.data.datasets[0].data = gananciasPorTipo;
+        chartPie.update();
+      } else {
+        const ctxPie = document.getElementById('chart-pie').getContext('2d');
+        chartPie = new Chart(ctxPie, {
+          type: 'pie',
+          data: {
+            labels: tipos,
+            datasets: [{
+              label: 'Distribución por tipo',
+              data: gananciasPorTipo,
+              backgroundColor: ['#34495e', '#2ecc71', '#e67e22', '#e74c3c']
+            }]
+          }
+        });
       }
     }
-    reader.readAsText(file);
-  });
 
-
-  function exportarPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Reporte de Trabajos Académicos", 10, 20);
-    doc.setFontSize(12);
-    doc.text(`Total Trabajos Pagados: ${servicios.length}`, 10, 40);
-    const totalPagado = servicios.reduce((acc, s) => acc + Number(s.valor), 0);
-    doc.text(`Ganancias Totales: $${totalPagado.toLocaleString()}`, 10, 50);
-    const pendienteQ1 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() <= 15)
-      .reduce((acc, s) => acc + Number(s.valor), 0);
-    const pendienteQ2 = pendientes.filter(s => parseDateLocal(s.fecha).getDate() > 15)
-      .reduce((acc, s) => acc + Number(s.valor), 0);
-    doc.text(`Pendiente Quincena 1: $${pendienteQ1.toLocaleString()}`, 10, 60);
-    doc.text(`Pendiente Quincena 2: $${pendienteQ2.toLocaleString()}`, 10, 70);
-    doc.save(`reporte-${new Date().toISOString().split('T')[0]}.pdf`);
-  }
-
-  /* ----------------- Cambio de Vistas ----------------- */
-  function mostrarEstadisticas() {
-    document.getElementById('view-main').style.display = "none";
-    document.getElementById('view-stats').style.display = "block";
-    document.getElementById('btn-ver-stats').style.display = "none";
-    document.getElementById('btn-ver-main').style.display = "block";
-    actualizarEstadisticasGlobales();
-    actualizarCharts();
-  }
-
-  function mostrarMain() {
-    document.getElementById('view-stats').style.display = "none";
-    document.getElementById('view-main').style.display = "block";
-    document.getElementById('btn-ver-main').style.display = "none";
-    document.getElementById('btn-ver-stats').style.display = "block";
-  }
-
-  /* ----------------- Gráficos con Chart.js ----------------- */
-  let chartLine, chartBar, chartPie;
-  function actualizarCharts() {
-    const hoy = new Date();
-    const mesActual = hoy.getMonth();
-    const anioActual = hoy.getFullYear();
-    const trabajosMes = servicios.filter(s => {
-      const f = parseDateLocal(s.fecha);
-      return f.getMonth() === mesActual && f.getFullYear() === anioActual;
-    });
-    const dias = Array.from({ length: 31 }, (_, i) => i + 1);
-    const gananciasPorDia = dias.map(dia =>
-      trabajosMes.filter(s => parseDateLocal(s.fecha).getDate() === dia)
-        .reduce((acc, s) => acc + Number(s.valor), 0)
-    );
-    const tipos = ["academico", "parcial", "proyecto", "correccion"];
-    const gananciasPorTipo = tipos.map(tipo =>
-      trabajosMes.filter(s => s.tipo === tipo)
-        .reduce((acc, s) => acc + Number(s.valor), 0)
-    );
-
-    if (chartLine) {
-      chartLine.data.labels = dias;
-      chartLine.data.datasets[0].data = gananciasPorDia;
-      chartLine.update();
-    } else {
-      const ctxLine = document.getElementById('chart-line').getContext('2d');
-      chartLine = new Chart(ctxLine, {
-        type: 'line',
-        data: {
-          labels: dias,
-          datasets: [{
-            label: 'Ganancias por día',
-            data: gananciasPorDia,
-            backgroundColor: 'rgba(74, 144, 226, 0.2)',
-            borderColor: 'rgba(74, 144, 226, 1)',
-            borderWidth: 2,
-            fill: true
-          }]
-        },
-        options: {
-          scales: {
-            x: { title: { display: true, text: 'Día del mes' } },
-            y: { title: { display: true, text: 'Ganancias' } }
-          }
-        }
-      });
+    // Guardar datos en localStorage
+    function guardarDatos() {
+      localStorage.setItem('servicios', JSON.stringify(servicios));
+      localStorage.setItem('pendientes', JSON.stringify(pendientes));
     }
 
-    if (chartBar) {
-      chartBar.data.labels = tipos;
-      chartBar.data.datasets[0].data = gananciasPorTipo;
-      chartBar.update();
-    } else {
-      const ctxBar = document.getElementById('chart-bar').getContext('2d');
-      chartBar = new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-          labels: tipos,
-          datasets: [{
-            label: 'Ganancias por tipo',
-            data: gananciasPorTipo,
-            backgroundColor: ['#34495e', '#2ecc71', '#e67e22', '#e74c3c']
-          }]
-        },
-        options: {
-          scales: {
-            y: { beginAtZero: true, title: { display: true, text: 'Ganancias' } }
-          }
-        }
-      });
-    }
+    /* ----------------- Inicialización ----------------- */
+    actualizarTodo();
 
-    if (chartPie) {
-      chartPie.data.labels = tipos;
-      chartPie.data.datasets[0].data = gananciasPorTipo;
-      chartPie.update();
-    } else {
-      const ctxPie = document.getElementById('chart-pie').getContext('2d');
-      chartPie = new Chart(ctxPie, {
-        type: 'pie',
-        data: {
-          labels: tipos,
-          datasets: [{
-            label: 'Distribución por tipo',
-            data: gananciasPorTipo,
-            backgroundColor: ['#34495e', '#2ecc71', '#e67e22', '#e74c3c']
-          }]
-        }
-      });
-    }
-  }
-
-  // Guardar datos en localStorage
-  function guardarDatos() {
-    localStorage.setItem('servicios', JSON.stringify(servicios));
-    localStorage.setItem('pendientes', JSON.stringify(pendientes));
-  }
-
-  /* ----------------- Inicialización ----------------- */
-  actualizarTodo();
-
-  /* ----------------- Notas para Integración Backend ----------------- */
-  // En un entorno real, se recomienda integrar esta aplicación con un backend (por ejemplo, Firebase, MongoDB, etc.)
-  // para almacenar y sincronizar los datos de forma segura, así como implementar una autenticación robusta.
-</script>
+    /* ----------------- Notas para Integración Backend ----------------- */
+    // En un entorno real, se recomienda integrar esta aplicación con un backend (por ejemplo, Firebase, MongoDB, etc.)
+    // para almacenar y sincronizar los datos de forma segura, así como implementar una autenticación robusta.
+  </script>
 </body>
 
 </html>
