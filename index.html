@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestor de Trabajos Académicos Mejorado</title>
+  <link rel="icon" type="image/png" href="logo-tus-trabajos.png">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- jsPDF para exportar a PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Hoja de estilos externa -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Modal de autenticación (oculto por defecto) -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <h2>Inicia Sesión</h2>
+      <div class="form-group">
+        <input type="text" id="username" placeholder="Usuario">
+        <input type="password" id="password" placeholder="Contraseña">
+      </div>
+      <button class="btn" onclick="login()">Ingresar</button>
+    </div>
+  </div>
+
+  <!-- Contenedor de Toast notifications -->
+  <div id="toast-container"></div>
+
+  <!-- Contenedor principal de la aplicación -->
+  <div class="container" id="appContainer" style="display: none;">
+    <!-- Botones para cambiar de vista -->
+    <div class="acciones" style="justify-content: center; margin-bottom: 1rem;">
+      <button class="btn" id="btn-ver-stats" onclick="mostrarEstadisticas()">Ver Estadísticas</button>
+      <button class="btn" id="btn-ver-main" onclick="mostrarMain()" style="display:none;">Volver al Sistema</button>
+      <button class="btn" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <!-- Vista Principal -->
+    <div id="view-main" class="view active">
+      <h1>📚 Gestor de Trabajos Académicos</h1>
+
+      <!-- Filtros Avanzados -->
+      <div class="seccion">
+        <h3>Filtros Avanzados</h3>
+        <div class="form-group">
+          <input type="text" id="buscarCodigo" placeholder="Buscar por código">
+          <select id="filtrarTipo">
+            <option value="">Todos los tipos</option>
+            <option value="1">1. Desarrollo de trabajo académico.</option>
+            <option value="2">2. Acompañamiento y desarrollo de proyecto de grado.</option>
+            <option value="3">3. Ayuda en un examen/parcial.</option>
+            <option value="4">4. Tutoría y Asesoría personalizada.</option>
+            <option value="5">5. Corrección y mejora de trabajos académicos.</option>
+            <option value="6">6. Turnitin Plagio o Paquete IA.</option>
+          </select>
+          <div style="display: flex; gap: 1rem;">
+            <input type="date" id="fechaInicio">
+            <input type="date" id="fechaFin">
+          </div>
+        </div>
+        <button class="btn" onclick="filtrarTrabajos()">Filtrar</button>
+        <button class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar Filtros</button>
+      </div>
+
+      <!-- Formulario para agregar/editar trabajo -->
+      <div class="seccion" id="formulario">
+        <div class="form-group">
+          <select id="tipoServicio">
+            <option value="">Tipo de servicio</option>
+            <option value="1">1. Desarrollo de trabajo académico.</option>
+            <option value="2">2. Acompañamiento y desarrollo de proyecto de grado.</option>
+            <option value="3">3. Ayuda en un examen/parcial.</option>
+            <option value="4">4. Tutoría y Asesoría personalizada.</option>
+            <option value="5">5. Corrección y mejora de trabajos académicos.</option>
+            <option value="6">6. Turnitin Plagio o Paquete IA.</option>
+          </select>
+          <input type="text" id="codigo" placeholder="Código">
+          <input type="number" id="valor" placeholder="Valor">
+          <input type="date" id="fecha">
+        </div>
+        <button class="btn" onclick="guardarTrabajo()">Agregar/Actualizar Trabajo</button>
+      </div>
+
+      <!-- Botones de importación/exportación -->
+      <div class="seccion acciones">
+        <button class="btn" onclick="exportarCSV()">Exportar CSV</button>
+        <button class="btn" onclick="exportarJSON()">Exportar JSON</button>
+        <button class="btn" onclick="exportarPDF()">Exportar PDF</button>
+        <input type="file" id="importarCSV" hidden accept=".csv">
+        <button class="btn btn-secondary" onclick="document.getElementById('importarCSV').click()">Importar CSV</button>
+        <input type="file" id="importarJSON" hidden accept="application/json">
+        <button class="btn btn-secondary" onclick="document.getElementById('importarJSON').click()">Importar JSON</button>
+      </div>
+
+      <!-- Estadísticas Globales -->
+      <div class="seccion">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: space-around;">
+          <div>
+            <h3>Total Pagados</h3>
+            <div id="total-servicios">0</div>
+          </div>
+          <div>
+            <h3>Ganancias Totales</h3>
+            <div id="ganancias-totales">$0</div>
+          </div>
+          <div>
+            <h3>Pendiente Quincena 1</h3>
+            <div id="pendiente-q1">$0</div>
+          </div>
+          <div>
+            <h3>Pendiente Quincena 2</h3>
+            <div id="pendiente-q2">$0</div>
+          </div>
+          <!-- Ahora se mostrará el total de ventas (todas) -->
+          <div>
+            <h3>Total Ventas</h3>
+            <div id="total-mes">$0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Tipos de Trabajos -->
+      <div class="seccion">
+        <h3>Tipos de Trabajos</h3>
+        <table id="tabla_identificación">
+          <thead>
+            <tr>
+              <th>Código de Tipo de Trabajo</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Desarrollo de trabajo académico</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Acompañamiento y desarrollo de proyecto de grado</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Ayuda en un examen/parcial</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Tutoría y Asesoría personalizada</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Corrección y mejora de trabajos académicos</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>Turnitin Plagio o Paquete IA</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Trabajos Pendientes -->
+      <div class="seccion">
+        <h2>🕒 Trabajos Pendientes</h2>
+        <h3 id="header-q1">Quincena 1</h3>
+        <table id="tabla-pendientes-q1">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Valor</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Datos de la quincena 1 -->
+          </tbody>
+        </table>
+        <h3 id="header-q2">Quincena 2</h3>
+        <table id="tabla-pendientes-q2">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Valor</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Datos de la quincena 2 -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Trabajos Pagados -->
+      <div class="seccion">
+        <h2>✅ Trabajos Pagados</h2>
+        <div id="lista-servicios"></div>
+      </div>
+    </div>
+
+    <!-- Vista de Estadísticas -->
+    <div id="view-stats" class="view" style="display: none;">
+      <h1>📊 Estadísticas de Ventas (Todas)</h1>
+      <div class="seccion">
+        <h3>Total Ganado: <span id="total-mes">$0</span></h3>
+      </div>
+      <div class="seccion" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+        <div style="flex: 1; min-width: 300px;">
+          <canvas id="chart-line"></canvas>
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+          <canvas id="chart-bar"></canvas>
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+          <canvas id="chart-pie"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Archivo JavaScript externo -->
+  <script src="script.js"></script>
+</body>
+</html>

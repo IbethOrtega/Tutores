@@ -1,0 +1,272 @@
+/* ============================================
+   VARIABLES Y ESTILOS BASE
+============================================ */
+:root {
+    --color-primario: #4a90e2;
+    --color-secundario: #50e3c2;
+    --fondo: #f4f7f6;
+    --texto: #333;
+    --blanco: #ffffff;
+    --gris-claro: #e1e8ed;
+    --sombra: rgba(0, 0, 0, 0.1);
+    --degradado: linear-gradient(135deg, #4a90e2, #50e3c2);
+  }
+  
+  body {
+    background: var(--fondo);
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+  }
+  
+  /* ============================================
+     CONTENEDOR PRINCIPAL
+  ============================================ */
+  .container {
+    display: block;
+    max-width: 1200px;
+    background: var(--blanco);
+    margin: 2rem auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px var(--sombra);
+    padding: 2rem;
+    overflow: hidden;
+    text-align: center;
+  }
+  
+  /* ============================================
+     ESTILOS DE TEXTOS Y SECCIONES
+  ============================================ */
+  h1, h2, h3 {
+    color: var(--color-primario);
+  }
+  
+  .seccion {
+    background: var(--gris-claro);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  /* ============================================
+     FORMULARIOS E INPUTS
+  ============================================ */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  input, select {
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: var(--blanco);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  input:focus, select:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    outline: none;
+  }
+  
+  /* ============================================
+     BOTONES
+  ============================================ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: var(--degradado);
+    color: var(--blanco);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.2);
+  }
+  
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(74, 144, 226, 0.3);
+  }
+  
+  .btn-secondary {
+    background: #fff;
+    color: var(--color-primario);
+    border: 1px solid var(--color-primario);
+  }
+  
+  /* ============================================
+     CONTENEDOR DE ACCIONES
+  ============================================ */
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+  
+  /* ============================================
+     TABLAS
+  ============================================ */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--blanco);
+    box-shadow: 0 4px 8px var(--sombra);
+    margin: auto;
+    font-size: 12px;
+  }
+  
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--gris-claro);
+    font-size: 12px;
+  }
+  
+  th {
+    background: var(--color-primario);
+    color: var(--blanco);
+  }
+  
+  /* Botones de acción en tablas */
+  .accion-btn {
+    padding: 0.5rem;
+    background: var(--gris-claro);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  
+  .accion-btn:hover {
+    background: var(--color-primario);
+    color: var(--blanco);
+    transform: scale(1.05);
+  }
+  
+  /* ============================================
+     TOAST NOTIFICATIONS
+  ============================================ */
+  #toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+  }
+  
+  .toast {
+    background: var(--color-primario);
+    color: var(--blanco);
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    opacity: 0;
+    transform: translateX(100%);
+    animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 3s;
+  }
+  
+  @keyframes slideIn {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+  
+  /* ============================================
+     MODAL DE LOGIN
+  ============================================ */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .modal.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+  
+  .modal-content {
+    background: var(--blanco);
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .modal-content h2 {
+    margin-bottom: 1rem;
+  }
+  
+  /* ============================================
+     RESPONSIVE
+  ============================================ */
+  @media (max-width: 600px) {
+    .container {
+      width: 100%;
+      margin: 0;
+      padding: 0.5rem;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  
+    table {
+      font-size: 0.8rem;
+      margin: 0;
+      box-shadow: none;
+    }
+  
+    th, td {
+      font-size: 0.8rem;
+      padding: 0.5rem;
+      text-align: center;
+    }
+  
+    h1 {
+      font-size: 1.2rem;
+    }
+  
+    .seccion {
+      padding: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+  
+    input, select {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+    }
+  
+    .btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+  }
+  
